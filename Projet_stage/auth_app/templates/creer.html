@@ -1,0 +1,125 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Creation{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('images/bg_1.jpg');">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row no-gutters slider-text align-items-center justify-content-center">
+        <div class="col-md-9 ftco-animate text-center">
+          <h1 class="mb-2 bread"><h1>Créer un {{ role }}</h1></h1>
+          <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Créer un {{ role }}<i class="ion-ios-arrow-forward"></i></span></p>
+        </div>
+      </div>
+    </div>
+  </section>      
+
+<section class="ftco-section ftco-no-pt ftco-no-pb contact-section">
+   
+  <div class="container">
+    <div class="row d-flex align-items-stretch no-gutters">
+      <div class="p-4 p-md-5 order-md-last bg-light">
+        
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+                <h3> Créer un {{ role }}</h3><br>
+            {% csrf_token %}
+                        {{ form.as_p }}
+        </div>
+          <div class="form-group">
+            <input type="submit" value="Creer" class="btn btn-primary py-3 px-5">
+          </div>
+        </form>
+        <p class="link"><a href="{{ request.META.HTTP_REFERER }}">Retour</a>
+        </p>
+      </div>
+      
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const programmeContainer = document.getElementById('id_programme');
+        const domaineContainer = document.getElementById('id_domaine');
+    
+        if (!programmeContainer) {
+            console.error("L'élément #id_programme n'a pas été trouvé dans le DOM.");
+            return;
+        }
+    
+        programmeContainer.addEventListener('change', function () {
+            const checkboxes = programmeContainer.querySelectorAll('input[type="checkbox"]:checked');
+            const selectedProgrammes = Array.from(checkboxes).map(checkbox => checkbox.value);
+    
+            if (selectedProgrammes.length > 0) {
+                const url = "{% url 'load_domaines' %}";
+                const params = new URLSearchParams();
+                selectedProgrammes.forEach(id => params.append('programme_ids[]', id));
+    
+                fetch(`${url}?${params}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Vérifier si le domaine est un select (dropdown) ou une série de checkboxes
+                        if (domaineContainer.tagName === 'SELECT') {
+                            // Si c'est un select (liste déroulante)
+                            domaineContainer.innerHTML = '<option value="">Sélectionnez un domaine</option>';
+                            data.forEach(item => {
+                                const option = new Option(item.code_programme, item.id);
+                                domaineContainer.add(option);
+                            });
+                        } else {
+                            // Si c'est un conteneur de checkboxes
+                            domaineContainer.innerHTML = ''; // Effacer les anciennes cases à cocher
+                            const uniqueDomaines = new Map(); // Utilisation d'une Map pour éviter les doublons
+                            data.forEach(item => {
+                                if (!uniqueDomaines.has(item.id)) {
+                                    uniqueDomaines.set(item.id, item.code_programme);
+                                    const div = document.createElement('div');
+                                    const label = document.createElement('label');
+                                    const input = document.createElement('input');
+    
+                                    input.type = 'checkbox';
+                                    input.name = 'domaine';
+                                    input.value = item.id;
+                                    input.id = `id_domaine_${item.id}`;
+    
+                                    label.setAttribute('for', `id_domaine_${item.id}`);
+                                    label.textContent = item.code_programme;
+    
+                                    div.appendChild(input);
+                                    div.appendChild(label);
+    
+                                    domaineContainer.appendChild(div);
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération des domaines:', error);
+                    });
+            } else {
+                if (domaineContainer.tagName === 'SELECT') {
+                    domaineContainer.innerHTML = '<option value="">Sélectionnez un domaine</option>';  // Réinitialiser l'option si aucun programme n'est sélectionné
+                } else {
+                    domaineContainer.innerHTML = ''; // Réinitialiser les checkboxes si aucun programme n'est sélectionné
+                }
+            }
+        });
+    });
+    </script>
+    
+</section>
+
+{% endblock %}

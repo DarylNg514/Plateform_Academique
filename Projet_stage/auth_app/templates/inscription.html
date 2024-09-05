@@ -1,0 +1,95 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Inscriptiom{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('images/bg_1.jpg');">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row no-gutters slider-text align-items-center justify-content-center">
+        <div class="col-md-9 ftco-animate text-center">
+          <h1 class="mb-2 bread">Demande d'dmission</h1>
+          <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Demander une Admission <i class="ion-ios-arrow-forward"></i></span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="ftco-section ftco-no-pt ftco-no-pb contact-section">
+   
+  <div class="container">
+    <div class="row d-flex align-items-stretch no-gutters">
+      <div class="p-4 p-md-5 order-md-last bg-light">
+        <form method="post">
+            <div class="form-group">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+                <h3> Veillez remplir ce formulaire</h3><br>
+            {% csrf_token %}
+                        {{ form.as_p }}
+        </div>
+          <div class="form-group">
+            <input type="submit" value="S'inscrire" class="btn btn-primary py-3 px-5">
+          </div>
+        </form>
+        <p class="link">Déjà Fait ? <a href="{% url 'connexion' %}">Se connecter</a></p>
+      </div>
+      
+    </div>
+  </div>
+</section>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const programmeContainer = document.getElementById('id_programme');
+    const domaineSelect = document.getElementById('id_domaine');
+
+    if (!programmeContainer) {
+        console.error("L'élément #id_programme n'a pas été trouvé dans le DOM.");
+        return;
+    }
+
+    programmeContainer.addEventListener('change', function () {
+        const checkboxes = programmeContainer.querySelectorAll('input[type="checkbox"]:checked');
+        const selectedProgrammes = Array.from(checkboxes).map(checkbox => checkbox.value);
+
+        if (selectedProgrammes.length > 0) {
+            const url = "{% url 'load_domaines' %}";
+            const params = new URLSearchParams();
+            selectedProgrammes.forEach(id => params.append('programme_ids[]', id));
+
+            fetch(`${url}?${params}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    domaineSelect.innerHTML = '<option value="">Sélectionnez un domaine</option>';  // Ajouter l'option par défaut
+                    const uniqueDomaines = new Map(); // Utilisation d'une Map pour éviter les doublons
+                    data.forEach(item => {
+                        if (!uniqueDomaines.has(item.id)) {
+                            uniqueDomaines.set(item.id, item.code_programme);
+                            const option = new Option(item.code_programme, item.id);
+                            domaineSelect.add(option);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération des domaines:', error);
+                });
+        } else {
+            domaineSelect.innerHTML = '<option value="">Sélectionnez un domaine</option>';  // Réinitialiser l'option si aucun programme n'est sélectionné
+        }
+    });
+});
+
+</script>
+
+
+{% endblock %}

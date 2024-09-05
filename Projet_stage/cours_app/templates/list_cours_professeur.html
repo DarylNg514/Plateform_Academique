@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Cours{% endblock %}
+
+{% block content %}
+<h2>Mes Cours</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Sigle</th>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cours in cours %}
+        <tr>
+            <td>{{ cours.sigle }}</td>
+            <td>{{ cours.titre }}</td>
+            <td>{{ cours.description }}</td>
+            <td>
+                <a href="{% url 'update_cours' cours.id %}" class="btn btn-primary btn-sm">Modifier</a>
+                <form method="post" action="{% url 'delete_cours' cours.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'create_cours' %}" class="btn btn-success">Ajouter un nouveau cours</a>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Rechercher un Cours{% endblock %}
+
+{% block content %}
+<h2>Rechercher un Cours</h2>
+<form method="get" action="{% url 'rechercher_cours' %}">
+    <input type="text" name="q" placeholder="Entrez le titre du cours" class="form-control" value="{{ query }}">
+    <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
+</form>
+
+{% if cours %}
+<h3 class="mt-4">Résultats de la recherche</h3>
+<ul class="list-group">
+    {% for cour in cours %}
+    <li class="list-group-item">
+        <h5>{{ cour.titre }}</h5>
+        <p>{{ cour.description }}</p>
+        <p><strong>Horaire :</strong> {{ cour.horaire }}</p>
+        <p><strong>Salle :</strong> {{ cour.salle }}</p>
+        <p><strong>Professeur :</strong> {{ cour.professeur.username }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="mt-4">Aucun cours trouvé pour votre recherche.</p>
+{% endif %}
+<a href="{% url 'list_cours_etudiant' %}" class="btn btn-secondary mt-3">Retour à mes cours</a>
+{% endblock %}

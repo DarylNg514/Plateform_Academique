@@ -1,0 +1,68 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Inscriptiom{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('images/bg_1.jpg');">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row no-gutters slider-text align-items-center justify-content-center">
+        <div class="col-md-9 ftco-animate text-center">
+          <h1 class="mb-2 bread">Domaines</h1>
+          <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Domaines <i class="ion-ios-arrow-forward"></i></span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ftco-section">
+    <div class="container-fluid px-4">
+        <div class="row">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% for domaine in domaines %}
+            <div class="col-md-3 course ftco-animate">
+                {% if domaine.image %}
+    <div class="img" style="background-image: url('{{ domaine.image.url }}');"></div>
+            {% endif %}
+                <div class="text pt-4">
+                    <h3><a href="#">{{ domaine.code_programme }}</a></h3>
+                    <p>{{ domaine.intitule }}</p>
+                    <p><strong>Programme :</strong> 
+                        {% if domaine.programme %}
+                            {{ domaine.programme.code_programme }}
+                        {% else %}
+                            Non assigné
+                        {% endif %}
+                    </p>
+                    <div class="d-flex ">
+                        <a href="{% url 'update_domaine' domaine.id %}" class="btn btn-primary me-2">
+                            <i class="bi bi-pencil-square"></i> 
+                        </a>
+                        <form method="post" action="{% url 'delete_domaine' domaine.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> 
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="row mt-4">
+            <div class="col text-center">
+                <a href="{% url 'create_domaine' %}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-plus-lg"></i> 
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+      {% endblock %}

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fr">
+  <head>
+    <title>{%block title%}Université NG-D {%endblock%}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/open-iconic-bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/ionicons.min.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  </head>
+  <body>
+	  <div class="bg-top navbar-light">
+    	<div class="container">
+    		<div class="row no-gutters d-flex align-items-center align-items-stretch">
+    			<div class="col-md-4 d-flex align-items-center py-4">
+    				<a class="navbar-brand" href="index.html">NG-D. <span>Université</span></a>
+    			</div>
+                
+	    		<div class="col-lg-8 d-block">
+		    		<div class="row d-flex">
+                        {% if user.is_authenticated %}
+                        <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
+					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
+					    	<div class="text">
+					    		<span>Nom {{user.role}}</span>
+						    	<span>{% if user.sex == 'Homme'%}Mr. {% elif user.sex == 'Femme' %}Mme. {%else%} {%endif%} {{ user.username }}</span>
+						    </div>
+					    </div>
+                        <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
+					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
+					    	<div class="text">
+					    		<span>Email</span>
+						    	<span>{{ user.email }}</span>
+						    </div>
+					    </div>
+                        <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
+					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-phone2"></span></div>
+						    <div class="text">
+						    	<span>Telephone</span>
+						    	<span>{{ user.telephone }}</span>
+						    </div>
+					    </div>
+                        <div class="col-md topper d-flex align-items-center justify-content-end">
+					    	<p class="mb-0">
+                                <a href="{% url 'deconnexion' %}" class="btn py-2 px-3 btn-primary d-flex align-items-center justify-content-center">
+					    			<span>Déconnexion</span>
+					    		</a>
+					    	</p>
+					    </div>
+                        
+                {% else %}
+					    <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
+					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
+					    	<div class="text">
+					    		<span>Email</span>
+						    	<span>NgueufangDaryl99@email.com</span>
+						    </div>
+					    </div>
+					    <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
+					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-phone2"></span></div>
+						    <div class="text">
+						    	<span>Appelez</span>
+						    	<span>Appelez-nous : +1 514 467 0633</span>
+						    </div>
+					    </div>
+					    <div class="col-md topper d-flex align-items-center justify-content-end">
+					    	<p class="mb-0">
+                                <a href="{% url 'inscription' %}" class="btn py-2 px-3 btn-primary d-flex align-items-center justify-content-center">
+					    			<span>Demander une Admission</span>
+					    		</a>
+					    	</p>
+					    </div>
+                        {% endif %}
+				    </div>
+			    </div>
+		    </div>
+		  </div>
+    </div>
+   
+	  <nav class="navbar navbar-expand-lg navbar-dark bg-dark ftco-navbar-light" id="ftco-navbar">
+	    <div class="container d-flex align-items-center px-4">
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Basculer la navigation">
+	        <span class="oi oi-menu"></span> Menu
+	      </button>
+	      <form action="#" class="searchform order-lg-last">
+          <div class="form-group d-flex">
+            <input type="text" class="form-control pl-3" placeholder="Rechercher">
+            <button type="submit" placeholder="" class="form-control search"><span class="ion-ios-search"></span></button>
+          </div>
+        </form>
+	      <div class="collapse navbar-collapse" id="ftco-nav">
+	        <ul class="navbar-nav mr-auto">
+              {% if user.is_authenticated  %}
+              <li class="nav-item">
+                <a href="{% url 'afficher_messages' %}" class="nav-link">
+                    Messages
+                    {% if unread_messages_count > 0 %}
+                        <span class="badge badge-danger"><i class="bi bi-chat-dots"></i>{{ unread_messages_count }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            <li class="nav-item"><a href="{% url 'profil_utilisateur' %}" class="nav-link">Gestion de mon compte</a></li>
+                {% if user.role == 'Admin'  %}
+              <li class="nav-item"><a href="{% url 'list_utilisateurs' %}" class="nav-link">All Users</a></li>  
+              <li class="nav-item"><a href="{% url 'list_admins' %}" class="nav-link">Gestion Admin</a></li>  
+              <li class="nav-item"><a href="{% url 'list_candidats' %}" class="nav-link">Gestion Candidate</a></li>  
+              <li class="nav-item"><a href="{% url 'list_enseignants' %}" class="nav-link">Gestion Enseignant</a></li>  
+              <li class="nav-item"><a href="{% url 'list_etudiants' %}" class="nav-link">Gestion Etudiant</a></li>  
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Cours</a></li>  
+              <li class="nav-item"><a href="{% url 'list_sessions' %}" class="nav-link">Gestion Session</a></li>
+              <li class="nav-item"><a href="{% url 'list_domaines' %}" class="nav-link">Gestion Domaine</a></li>
+              <li class="nav-item"><a href="{% url 'list_programmes' %}" class="nav-link">Gestion Programme</a></li>
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Horaire</a></li>
+
+              {% elif user.role == 'Enseignant'  %}
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion notes de cours</a></li>  
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion resultat etudiant</a></li>  
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Devoirs</a></li>  
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Session</a></li>
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Programme</a></li>
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Mon Horaire</a></li>
+
+              {% elif user.role == 'Etudiant'  %}
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Consulter mes notes de cours</a></li>  
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Consulter mes resultat </a></li>  
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion de mes cours</a></li>
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Mon Horaire</a></li>
+              {% else %}
+              <li class="nav-item active"><a href="{% url 'acceuil' %}" class="nav-link pl-0">Accueil</a></li>
+	        	<li class="nav-item"><a href="about.html" class="nav-link">À propos</a></li>
+	        	<li class="nav-item"><a href="courses.html" class="nav-link">Cours</a></li>
+	        	<li class="nav-item"><a href="teacher.html" class="nav-link">Personnel</a></li>
+	        	<li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+	          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+              {% endif %}
+              {% else %}
+              <li class="nav-item active"><a href="{% url 'acceuil' %}" class="nav-link pl-0">Accueil</a></li>
+	        	<li class="nav-item"><a href="about.html" class="nav-link">À propos</a></li>
+	        	<li class="nav-item"><a href="courses.html" class="nav-link">Cours</a></li>
+	        	<li class="nav-item"><a href="teacher.html" class="nav-link">Personnel</a></li>
+	        	<li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+	          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">connexion</a></li>  
+              {% endif %}
+	        </ul>
+	      </div>
+	    </div>
+	  </nav>
+    <!-- FIN nav -->
+    {% block content %}{% endblock %}
+		
+    <footer class="ftco-footer ftco-bg-dark ftco-section">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md-6 col-lg-3">
+            <div class="ftco-footer-widget mb-5">
+            	<h2 class="ftco-heading-2">Vous avez des questions ?</h2>
+            	<div class="block-23 mb-3">
+	              <ul>
+	                <li><span class="icon icon-map-marker"></span><span class="text">203 Rue Fictive, Mountain View, San Francisco, Californie, USA</span></li>
+	                <li><a href="#"><span class="icon icon-phone"></span><span class="text">+1 514 467 0633</span></a></li>
+	                <li><a href="#"><span class="icon icon-envelope"></span><span class="text">NgueufangDaryl99@Gmail.com</span></a></li>
+	              </ul>
+	            </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="ftco-footer-widget mb-5">
+              <h2 class="ftco-heading-2">Blog récent</h2>
+              <div class="block-21 mb-4 d-flex">
+                <a class="blog-img mr-4" style="background-image: url({% static 'images/image_1.jpg' %});"></a>
+                <div class="text">
+                  <h3 class="heading"><a href="#">Même le tout-puissant Pointing n'a aucun contrôle sur les textes aveugles</a></h3>
+                  <div class="meta">
+                    <div><a href="#"><span class="icon-calendar"></span> 27 Juin 2019</a></div>
+                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
+                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
+                  </div>
+                </div>
+              </div>
+              <div class="block-21 mb-5 d-flex">
+                <a class="blog-img mr-4" style="background-image: url({% static 'images/image_2.jpg' %});"></a>
+                <div class="text">
+                  <h3 class="heading"><a href="#">Même le tout-puissant Pointing n'a aucun contrôle sur les textes aveugles</a></h3>
+                  <div class="meta">
+                    <div><a href="#"><span class="icon-calendar"></span> 27 Juin 2019</a></div>
+                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
+                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="ftco-footer-widget mb-5 ml-md-4">
+              <h2 class="ftco-heading-2">Liens</h2>
+              <ul class="list-unstyled">
+                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>Accueil</a></li>
+                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>À propos</a></li>
+                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>Services</a></li>
+                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>Départements</a></li>
+                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>Contact</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="ftco-footer-widget mb-5">
+            	<h2 class="ftco-heading-2">Abonnez-vous !</h2>
+              <form action="#" class="subscribe-form">
+                <div class="form-group">
+                  <input type="text" class="form-control mb-2 text-center" placeholder="Entrez votre adresse email">
+                  <input type="submit" value="Abonnez-vous" class="form-control submit px-3">
+                </div>
+              </form>
+            </div>
+            <div class="ftco-footer-widget mb-5">
+            	<h2 class="ftco-heading-2 mb-0">Connectez-vous avec nous</h2>
+            	<ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-3">
+                <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
+                <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
+                <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-center">
+
+            <p><!-- Le lien vers Colorlib ne peut pas être supprimé. Le modèle est sous licence CC BY 3.0. -->
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> Tous droits réservés | Daryl_237 <i class="icon-heart" aria-hidden="true"></i>
+  <!-- Le lien vers Colorlib ne peut pas être supprimé. Le modèle est sous licence CC BY 3.0. --></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+  
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/jquery-migrate-3.0.1.min.js' %}"></script>
+  <script src="{% static 'js/popper.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/jquery.easing.1.3.js' %}"></script>
+  <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+  <script src="{% static 'js/jquery.stellar.min.js' %}"></script>
+  <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+  <script src="{% static 'js/aos.js' %}"></script>
+  <script src="{% static 'js/jquery.animateNumber.min.js' %}"></script>
+  <script src="{% static 'js/scrollax.min.js' %}"></script>
+  <script src="{% static 'js/google-map.js' %}"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+    
+  </body>
+</html>

@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Lire Message{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Lire Message</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>Lire Message <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="blog-entry">
+                    <div class="text bg-white p-4">
+                        <h3 class="heading">{{ message.sujet }}</h3>
+                        <p>
+                            <strong>De:</strong> {{ message.expéditeur.username }} 
+                            ({{ message.expéditeur.get_role_display }})
+                            {% if message.expéditeur.programme %}
+                                , Programme : {{ message.expéditeur.programme.intitule }}
+                            {% endif %}
+                            {% if message.expéditeur.session %}
+                                , Session : {{ message.expéditeur.session.code_session }}
+                            {% endif %}
+                            {% if message.expéditeur.domaine %}
+                                , Domaine : {{ message.expéditeur.domaine.intitule }}
+                            {% endif %}
+                        </p>
+                                                <p><strong>Date:</strong> {{ message.date_formatee }}</p>
+                        <p>{{ message.contenu }}</p>
+                        <a href="{% url 'afficher_messages' %}" class="btn btn-primary">
+                            Retour à la liste des messages
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

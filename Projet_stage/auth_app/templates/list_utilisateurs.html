@@ -1,0 +1,130 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}{% if role %} {{ role }}s {%else%}Tous les Utilisateurs{%endif%}{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">{% if role %} {{ role }}s {%else%}Tous les Utilisateurs{%endif%}</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>{% if role %} {{ role }}s {%else%}Tous les Utilisateurs{%endif%} <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container-fluid px-4">
+        <div class="row">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% for utilisateur in utilisateurs %}
+            {% if not role or utilisateur.role != 'Candidat' or utilisateur.status != False %}
+            <div class="col-md-3 course ftco-animate">
+                {% if utilisateur.image %}
+                <div class="img" style="background-image: url('{{ utilisateur.image.url }}');"></div>
+                {% else %}
+                <div class="img" style="background-image: url('{% static 'images/default-profile.png' %}');"></div> <!-- Image par défaut si l'utilisateur n'a pas d'image -->
+                {% endif %}
+                <div class="text pt-4">
+                    <h3>{{ utilisateur.username }}</h3>
+                    <p><strong>Email :</strong> {{ utilisateur.email }}</p>
+                    <p><strong>Nom :</strong> {{ utilisateur.nom }}</p>
+                    <p><strong>Prénom :</strong> {{ utilisateur.prenom }}</p>
+                    <p><strong>Téléphone :</strong> {{ utilisateur.telephone }}</p>
+                    <p><strong>Date de naissance :</strong> {{ utilisateur.date_de_naissance }}</p>
+                    <p><strong>Adresse :</strong> {{ utilisateur.adresse }}</p>
+                    <p><strong>Code postal :</strong> {{ utilisateur.code_postal }}</p>
+                    <p><strong>Sexe :</strong> {{ utilisateur.get_sex_display }}</p>
+                    <p><strong>Rôle :</strong> {{ utilisateur.get_role_display }}</p>
+                    {%if utilisateur.role != 'Admin'%}  
+                    <p><strong>Programme :</strong> 
+                        {% if utilisateur.programme.exists %}
+                            {% for prog in utilisateur.programme.all %}
+                                {{ prog.code_programme }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            Non assigné
+                        {% endif %}
+                    </p>
+                    {%if utilisateur.role != 'Enseignant'%}
+                    <p><strong>Session :</strong> 
+                        {% if utilisateur.session %}
+                            {{ utilisateur.session.code_session }}
+                        {% else %}
+                            Non assigné
+                        {% endif %}
+                    </p>
+                    {% endif %}
+                    <p><strong>Domaine :</strong> 
+                        {% if utilisateur.domaine.exists %}
+                            {% for prog in utilisateur.domaine.all %}
+                                {{ prog.code_programme }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            Non assigné
+                        {% endif %}
+                    </p>
+                    {% endif %}
+                    {%if utilisateur.role == 'Candidat'%}  
+                    <p><strong>Status de la demande d'admission:</strong>
+                        {% if utilisateur.status is None %}
+                            <span class="badge badge-warning">En attente</span>
+                        {% elif utilisateur.status %}
+                            <span class="badge badge-success">Accepté</span>
+                        {% else %}
+                            <span class="badge badge-danger">Refusé</span>
+                        {% endif %}
+                    {%endif%}         
+                    {% if role %}      
+                    <div class="d-flex ">
+                        {%if role == 'Candidat'%}
+                        <a href="{% url 'accepter_candidat' utilisateur.id %}" class="btn btn-success me-2">
+                            <i class="bi bi-check-lg"></i> 
+                        </a>
+                        <a href="{% url 'refuser_candidat' utilisateur.id %}" class="btn btn-primary me-2">
+                            <i class="bi bi-x-lg"></i> 
+                        </a>
+                        {%else%}
+                        <a href="{% url 'update_utilisateur' utilisateur.id %}" class="btn btn-primary me-2">
+                            <i class="bi bi-pencil-square"></i> 
+                        </a>
+                        {%endif%}
+                        <form method="post" action="{% url 'delete_utilisateur' utilisateur.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> 
+                            </button>
+                        </form>
+                    </div>
+                    {%endif%}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% if role %}
+        {%if role != 'Candidat'%}
+        <div class="row mt-4">
+            <div class="col text-center">
+                <a href="{% url 'create_utilisateur' role=role %}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-plus-lg"></i> 
+                </a>
+            </div>
+        </div>
+        {%endif%}
+        {%endif%}
+    </div>
+</section>
+
+{% endblock %}

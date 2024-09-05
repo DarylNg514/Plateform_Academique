@@ -1,0 +1,89 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Mon Profil{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Mon Profil</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>Profil <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row">
+            {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+            <div class="col-md-12 ftco-animate">
+                {% if is_editing %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="form-group">
+                        <button type="submit" name="modifier" class="btn btn-primary py-3 px-5">Mettre à jour</button>
+                        <p class="link"><a href="{{ request.META.HTTP_REFERER }}">Retour</a>
+                    </div>
+                </form>
+                {% else %}
+                <h3>Informations du profil</h3>
+                <p><strong>Nom d'utilisateur:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Prénom:</strong> {{ user.prenom }}</p>
+                <p><strong>Nom:</strong> {{ user.nom }}</p>
+                <p><strong>Téléphone:</strong> {{ user.telephone }}</p>
+                <p><strong>Adresse:</strong> {{ user.adresse }}</p>
+                <p><strong>Code Postal:</strong> {{ user.code_postal }}</p>
+                <p><strong>Sexe:</strong> {{ user.get_sex_display }}</p>
+                <p><strong>Rôle:</strong> {{ user.get_role_display }}</p>
+                {% if user.programme %}
+                    <p><strong>Programme:</strong> {{ user.programme.intitule }}</p>
+                {% endif %}
+                {% if user.session %}
+                    <p><strong>Session:</strong> {{ user.session.code_session }}</p>
+                {% endif %}
+                {% if user.domaine %}
+                    <p><strong>Domaine:</strong> {{ user.domaine.code_programme }}</p>
+                {% endif %}
+                {% if user.get_role_display == 'Candidat' %}
+                <p><strong>Status de la demande d'admission:</strong>
+                {% if user.status is None %}
+                    <span class="badge badge-warning">En attente</span>
+                {% elif user.status %}
+                    <span class="badge badge-success">Accepté</span>
+                {% else %}
+                    <span class="badge badge-danger">Refusé</span>
+                {% endif %}
+                {% endif %}
+            </p>
+            {% if user.get_role_display == 'Candidat' %}
+                {%if user.status == False%}
+                <a href="{% url 'inscription' %}" class="btn btn-success py-2 px-3">Demander une nouvelle admission</a>
+                {% endif %}
+                {% else %}
+                <a href="{% url 'profil_utilisateur' %}?edit=true" class="btn btn-primary py-3 px-3">Modifier le profil</a>
+                {% endif %}
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    <button type="submit" name="supprimer" class="btn btn-danger py-2 px-3" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');"> Supprimer mon {%if user.get_role_display == 'Candidat' %} admission {%else%} compte {% endif %} </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Mettre a jour{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('images/bg_1.jpg');">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row no-gutters slider-text align-items-center justify-content-center">
+        <div class="col-md-9 ftco-animate text-center">
+          <h1 class="mb-2 bread">Mettre a jour</h1>
+          <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Mise a jour<i class="ion-ios-arrow-forward"></i></span></p>
+        </div>
+      </div>
+    </div>
+  </section>      
+
+<section class="ftco-section ftco-no-pt ftco-no-pb contact-section">
+   
+  <div class="container">
+    <div class="row d-flex align-items-stretch no-gutters">
+      <div class="p-4 p-md-5 order-md-last bg-light">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+                <h3> Mise a jour</h3><br>
+            {% csrf_token %}
+                        {{ form.as_p }}
+        </div>
+          <div class="form-group">
+            <input type="submit" value="Mettre a jour" class="btn btn-primary py-3 px-5">
+          </div>
+        </form>
+        <p class="link"><a href="{{ request.META.HTTP_REFERER }}">Retour</a>
+        </p>
+      </div>
+      
+    </div>
+  </div>
+</section>
+{% endblock %}

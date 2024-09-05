@@ -1,0 +1,19 @@
+{% extends 'index.html' %}
+{% block title %}Accepter Candidat{% endblock %}
+{% block content %}
+<section class="ftco-section">
+    <div class="container">
+        <h2>Accepter Candidat: {{ utilisateur.username }}</h2>
+        {% if form %}
+            <p>Ce candidat a sélectionné plusieurs programmes. Veuillez choisir l'un d'eux pour finaliser l'inscription.</p>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Valider le Programme</button>
+            </form>
+        {% else %}
+            <p>Le candidat a été accepté avec succès.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

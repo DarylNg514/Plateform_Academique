@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmation{% endblock %}
+
+{% block content %}
+<h2>Confirmation de la Suppression</h2>
+<p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <a href="{% url 'list_cours_etudiant' %}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}

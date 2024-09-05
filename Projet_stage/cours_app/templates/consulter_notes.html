@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Notes{% endblock %}
+
+{% block content %}
+<h2>Mes Notes</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Cours</th>
+            <th>Évaluation</th>
+            <th>Note Obtenue</th>
+            <th>Note Maximale</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for note in notes %}
+        <tr>
+            <td>{{ note.evaluation.cours.titre }}</td>
+            <td>{{ note.evaluation.titre }}</td>
+            <td>{{ note.note_obtenue }}</td>
+            <td>{{ note.evaluation.note_maximale }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'list_cours_etudiant' %}" class="btn btn-secondary mt-3">Retour à mes cours</a>
+{% endblock %}
