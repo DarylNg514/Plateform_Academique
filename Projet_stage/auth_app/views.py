@@ -3,20 +3,50 @@ from django.contrib.auth import login, authenticate, logout
 from django.http import JsonResponse
 from django.contrib import messages
 from .form import *
-from .models import Utilisateur, Programme, Session, Candidat
+from .models import *
+from cours_app.models import *
 
 def acceuil(request):
-    return render(request, 'acceuil.html')
+    enseignants = Utilisateur.objects.filter(role='Enseignant')
+    etudiants = Utilisateur.objects.filter(role='Etudiant')
+    cours = Cours.objects.all()
+    return render(request, 'acceuil.html', {'enseignants': enseignants, 'etudiants': etudiants, 'cours': cours})
+
+def contact(request):
+    return render(request, 'contact.html')
+
+def cours(request):
+    cours_liste = Cours.objects.all()  # Récupérer tous les cours
+    return render(request, 'courses.html', {'cours_liste': cours_liste})
+
+def blog(request):
+    return render(request, 'blog.html')
+
+def about(request):
+    return render(request, 'about.html')
+
+def personnel(request):
+    enseignants = Utilisateur.objects.filter(role='Enseignant')  # Filtrer les utilisateurs avec le rôle 'Enseignant'
+    return render(request, 'teacher.html', {'enseignants': enseignants})
 
 # CREATE
 
 def create_utilisateur(request, role):
     if request.method == 'POST':
-        form = UtilisateurForm(request.POST)
+        form = UtilisateurForm(request.POST, request.FILES)
         if form.is_valid():
             utilisateur = form.save(commit=False)  # Ne pas enregistrer tout de suite
             utilisateur.role = role  # Définir le rôle en fonction du paramètre
             utilisateur.save()  # Enregistrer l'utilisateur avec le rôle défini
+
+            # Assigner les programmes sélectionnés
+            programmes = form.cleaned_data['programme']
+            utilisateur.programme.set(programmes)
+
+            # Assigner les domaines sélectionnés
+            domaines = form.cleaned_data['domaine']
+            utilisateur.domaine.set(domaines)
+
             messages.success(request, f"Utilisateur {role} créé avec succès.")
             return redirect('list_utilisateurs')
     else:
@@ -59,23 +89,87 @@ def create_session(request):
 
 def inscription(request):
     if request.method == 'POST':
-        try:
-            utilisateur = Utilisateur.objects.get(username=request.POST['username'])
-            form = CandidatForm(request.POST, instance=utilisateur)
-            utilisateur.status = None
-        except Utilisateur.DoesNotExist:
-            form = CandidatForm(request.POST)
-
+        form = CandidatForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            if form.instance.pk:
-                messages.success(request, "Demande d'admission envoyé avec succès...")
-            else:
-                messages.success(request, "Demande d'admission envoyé avec succès...")
-            return redirect('acceuil')
+            # Créez un utilisateur temporaire mais ne le marquez pas comme inscrit
+            utilisateur = form.save(commit=False)
+            utilisateur.role = 'Candidat'
+            utilisateur.save()
+
+            # Enregistrez les fichiers directement sur l'utilisateur
+            if 'diplome' in request.FILES:
+                utilisateur.diplome = request.FILES['diplome']
+            if 'passport' in request.FILES:
+                utilisateur.passport = request.FILES['passport']
+            
+            # Enregistrez également les programmes et le domaine
+            programmes_selectionnes = form.cleaned_data.get('programme')
+            domaine_selectionne = form.cleaned_data.get('domaine')
+
+            if programmes_selectionnes:
+                utilisateur.programme.set(programmes_selectionnes)
+            if domaine_selectionne:
+                utilisateur.domaine.set([domaine_selectionne])
+
+            # Sauvegarder l'utilisateur, mais ne pas activer sa candidature tant que le paiement n'est pas confirmé
+            utilisateur.save()
+
+            # Stocker l'ID de l'utilisateur dans la session pour lier l'inscription après le paiement
+            request.session['utilisateur_id'] = utilisateur.id
+
+            # Rediriger vers la page de paiement
+            messages.info(request, "Vous devez payer les frais d'admission avant de finaliser votre inscription.")
+            return redirect('payer_inscription')  # Rediriger vers la page de paiement
     else:
         form = CandidatForm()
+
     return render(request, 'inscription.html', {'form': form})
+
+
+def payer_inscription(request):
+    # Récupérer l'utilisateur temporaire stocké dans la session
+    utilisateur_id = request.session.get('utilisateur_id')
+    
+    if not utilisateur_id:
+        messages.error(request, "Aucun utilisateur en attente de paiement.")
+        return redirect('inscription')  # Rediriger vers la page d'inscription si aucun utilisateur
+
+    utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id, role='Candidat')
+
+    # Récupère les frais actuels
+    parametres = Frais_admission.objects.first()  
+    frais_admission = parametres.montant if parametres else 100.00  # Valeur par défaut si non défini
+
+    context = {
+        'utilisateur': utilisateur,
+        'frais_admission': format(frais_admission, '.2f')
+    }
+
+    # Rendre la page de paiement, même en cas de requête GET
+    return render(request, 'payer.html', context)
+
+
+def paiement_succes_inscription(request):
+    # Récupérer l'utilisateur temporaire stocké dans la session
+    utilisateur_id = request.session.get('utilisateur_id')
+    utilisateur = get_object_or_404(Utilisateur, id=utilisateur_id, role='Candidat')
+
+    # Marquer l'utilisateur comme ayant payé les frais d'admission
+    utilisateur.frais_paye = True
+    utilisateur.save()
+
+    # Nettoyer la session après le paiement
+    request.session.pop('utilisateur_id', None)
+
+    # Message de succès de paiement
+    messages.success(request, "Paiement effectué avec succès. Votre demande d'admission est en cours de traitement.")
+
+    # Message pour informer qu'il peut désormais se connecter
+    messages.info(request, f"Vous pouvez maintenant vous connecter avec votre nom d'utilisateur : {utilisateur.username} et le mot de passe que vous avez défini lors de votre demande d'admission.")
+
+    return redirect('acceuil')
+
+
 
 def load_domaines(request):
     programme_ids = request.GET.getlist('programme_ids[]')
@@ -96,14 +190,20 @@ def connexion(request):
         if user is not None:
             authenticated_user = authenticate(request, username=username, password=password)
             if authenticated_user is not None:
+                # Vérifier si l'utilisateur est un candidat et si le paiement a été effectué
+                if authenticated_user.role == 'Candidat' and not authenticated_user.frais_paye:
+                    messages.info(request, "Vous devez payer les frais d'admission avant de vous connecter.")
+                    return redirect('payer_inscription')
+
+                # Connexion de l'utilisateur et redirection en fonction de son rôle
                 login(request, authenticated_user)
-                if authenticated_user.role=='Etudiant':
-                    return redirect('acceuil')
-                elif authenticated_user.role=='Enseignant':
-                    return redirect('acceuil')
-                if authenticated_user.role=='Admin':
+                if authenticated_user.role == 'Etudiant':
+                    return redirect('mes_cours_etudiant')
+                elif authenticated_user.role == 'Enseignant':
+                    return redirect('mes_cours_professeur')
+                elif authenticated_user.role == 'Admin':
                     return redirect('list_utilisateurs')
-                if authenticated_user.role=='Candidat':
+                elif authenticated_user.role == 'Candidat':
                     return redirect('acceuil')
                 else:
                     return redirect('acceuil')
@@ -258,6 +358,7 @@ def envoyer_message(request):
         form = MessageForm(request.POST, expéditeur=request.user)
         if form.is_valid():
             form.save()
+            messages.success(request, "Message envoyé avec succès.")
             return redirect('afficher_messages')
     else:
         form = MessageForm(expéditeur=request.user)
@@ -324,19 +425,30 @@ def accepter_candidat(request, user_id):
     return redirect('list_utilisateurs')
 
 def refuser_candidat(request, user_id):
+    # Récupérer l'utilisateur en question (candidat)
     utilisateur = get_object_or_404(Utilisateur, id=user_id, role='Candidat')
-    utilisateur.status = False  
-    utilisateur.save()
 
-    # Envoyer un message au candidat
-    Message.objects.create(
-        expéditeur=request.user,  # L'admin connecté est l'expéditeur
-        destinataire=utilisateur,
-        sujet="Demande d'admission refusée",
-        contenu="Nous regrettons de vous informer que votre demande d'admission a été refusée."
-    )
+    if request.method == 'POST':
+        # Récupérer le commentaire soumis dans le formulaire
+        commentaire = request.POST.get('comment', '')
 
-    return redirect('list_utilisateurs')  
+        # Mettre à jour le statut du candidat à "refusé" (False)
+        utilisateur.status = False
+        utilisateur.save()
+
+        # Créer et envoyer un message au candidat avec la raison du rejet
+        Message.objects.create(
+            expéditeur=request.user,  # L'admin connecté en tant qu'expéditeur
+            destinataire=utilisateur,  # Le candidat comme destinataire
+            sujet="Demande d'admission refusée",
+            contenu=f"Nous regrettons de vous informer que votre demande d'admission a été refusée. Raison : {commentaire}"
+        )
+
+        # Ajouter un message de succès pour l'administrateur
+        messages.success(request, "Le candidat a été rejeté avec succès.")
+
+    # Redirection vers la liste des utilisateurs après la soumission du formulaire
+    return redirect('list_utilisateurs')
 
 def profil_utilisateur(request):
     utilisateur = request.user  # Obtenir l'utilisateur connecté
@@ -357,7 +469,7 @@ def profil_utilisateur(request):
         elif 'supprimer' in request.POST:
             utilisateur.delete()
             messages.success(request, "Votre compte a été supprimé avec succès.")
-            return redirect('acceuil')  # Rediriger vers la page d'accueil après suppression du compte
+            return redirect('acceuil')  
     else:
         if utilisateur.role == 'Candidat':
             form = CandidatForm(instance=utilisateur)
@@ -365,3 +477,16 @@ def profil_utilisateur(request):
             form = UtilisateurChangeForm(instance=utilisateur)
 
     return render(request, 'profil_utilisateur.html', {'form': form,  'is_editing': 'edit' in request.GET})
+
+def changer_frais_admission(request):
+    parametres, created = Frais_admission.objects.get_or_create(id=1) 
+
+    if request.method == 'POST':
+        form = FraisInscriptionForm(request.POST, instance=parametres)
+        if form.is_valid():
+            form.save()
+            return redirect('list_utilisateurs')  
+    else:
+        form = FraisInscriptionForm(instance=parametres)
+
+    return render(request, 'changer_frais.html', {'form': form})

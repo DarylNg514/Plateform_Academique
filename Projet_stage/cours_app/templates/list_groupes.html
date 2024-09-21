@@ -1,0 +1,60 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Liste des Groupes{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Liste des Groupes</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span><span>Liste des Groupes <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container-fluid px-4">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+        <div class="row">
+           
+            {% for groupe in groupes %}
+            <div class="col-md-3 course ftco-animate">
+                <div class="img" style="background-image: url('{% static 'images/groupe.jpeg' %}'); width:120%"></div>
+                <div class="text pt-4">
+                    <h3>{{ groupe.nogroupe }}</h3>
+                    <p><strong>Nom du Groupe :</strong> {{ groupe.nom_groupe }}</p>
+                    <div class="d-flex ">
+                        <a href="{% url 'update_groupe' groupe.id %}" class="btn btn-primary me-2">
+                            <i class="bi bi-pencil-square"></i> 
+                        </a>
+                        <form method="post" action="{% url 'delete_groupe' groupe.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> 
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="row mt-4">
+            <div class="col text-center">
+                <a href="{% url 'create_groupe' %}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-plus-lg"></i> Ajouter un groupe
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

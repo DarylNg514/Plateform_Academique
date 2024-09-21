@@ -1,0 +1,119 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Détails de l'Étudiant{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Détails de l'Étudiant</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>Détails de l'Étudiant <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>{{ etudiant.get_full_name }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Email :</strong> {{ etudiant.email }}</p>
+                        <p><strong>Programme :</strong> 
+                            {% for programme in etudiant.programme.all %}
+                                {{ programme.code_programme }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <p><strong>Domaine :</strong> 
+                            {% for domaine in etudiant.domaine.all %}
+                                {{ domaine.code_programme }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <p><strong>Session :</strong> 
+                            {% for session in etudiant.session.all %}
+                                {{ session.code_session }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <p><strong>Groupe :</strong> 
+                            {% for inscription in inscriptions %}
+                                {{ inscription.groupe.nom_groupe }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h4>Inscriptions aux Cours</h4>
+                    <table class="table table-bordered table-hover text-center">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Cours</th>
+                                <th>Titre</th>
+                                <th>Date d'Inscription</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inscription in inscriptions %}
+                                <tr>
+                                    <td>{{ inscription.cours.sigle }}</td>
+                                    <td>{{ inscription.cours.titre }}</td>
+                                    <td>{{ inscription.date_inscription }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3">Aucun cours inscrit.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4">
+                    <h4>Notes Obtenues</h4>
+                    <table class="table table-bordered table-hover text-center">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Cours</th>
+                                <th>Évaluation</th>
+                                <th>Note Obtenue</th>
+                                <th>Mention</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for note in notes %}
+                                <tr>
+                                    <td>{{ note.evaluation.cours.sigle }}</td>
+                                    <td>{{ note.evaluation.titre }}</td>
+                                    <td>{{ note.note_obtenue }}</td>
+                                    <td>{{ note.get_mention }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4">Aucune note disponible.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <a href="{% url 'mes_cours_professeur' %}" class="btn btn-secondary">
+                        Retour à la Liste des Cours
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

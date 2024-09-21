@@ -1,0 +1,35 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Mettre à Jour une Évaluation{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Mettre à Jour une Évaluation</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span><span>Mettre à Jour une Évaluation <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section ftco-no-pt ftco-no-pb contact-section">
+    <div class="container">
+        <div class="row d-flex align-items-stretch no-gutters">
+            <div class="p-4 p-md-5 order-md-last bg-light">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="form-group">
+                        <input type="submit" value="Mettre à jour" class="btn btn-primary py-3 px-5">
+                    </div>
+                </form>
+                <p class="link"><a href="{% url 'liste_evaluations' evaluation.cours.id %}">Retour à la liste des évaluations</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

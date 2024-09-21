@@ -1,0 +1,49 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Mes Notes{% endblock %}
+{% block content %}
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Mes Notes</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>{{ cours.sigle }} - Notes <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container">
+        {% if notes %}
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Évaluation</th>
+                        <th>Note Obtenue</th>
+                        <th>Mention</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for note in notes %}
+                        <tr>
+                            <td>{{ note.evaluation.titre }}</td>
+                            <td>{{ note.note_obtenue }}</td>
+                            <td>{{ note.get_mention }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="col-md-12 text-center">
+                <p>Aucune note disponible pour ce cours.</p>
+                <p class="link"><a href="{{ request.META.HTTP_REFERER }}">Retour</a></p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

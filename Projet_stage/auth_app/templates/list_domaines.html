@@ -17,14 +17,15 @@
 
   <section class="ftco-section">
     <div class="container-fluid px-4">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         <div class="row">
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+           
             {% for domaine in domaines %}
             <div class="col-md-3 course ftco-animate">
                 {% if domaine.image %}

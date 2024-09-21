@@ -1,0 +1,59 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Créer un Horaire{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Créer un Horaire</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span><span>Créer un Horaire <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section ftco-no-pt ftco-no-pb contact-section">
+    <div class="container">
+        <div class="row d-flex align-items-stretch no-gutters justify-content-center">
+            <div class="col-md-8 p-4 p-md-5 order-md-last bg-light">
+                <h3 class="mb-4 text-center">Formulaire de Création d'un Horaire</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group mb-4">
+                        <label for="cours"><i class="bi bi-book"></i> Cours</label>
+                        {{ form.cours }}
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="jour"><i class="bi bi-calendar-event"></i> Jour</label>
+                        {{ form.jour }}
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="heure_debut"><i class="bi bi-clock"></i> Heure de Début</label>
+                        {{ form.heure_debut }}
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="heure_fin"><i class="bi bi-clock-fill"></i> Heure de Fin</label>
+                        {{ form.heure_fin }}
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="salle"><i class="bi bi-geo-alt"></i> Salle</label>
+                        {{ form.salle }}
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="professeur"><i class="bi bi-person"></i> Professeur</label>
+                        {{ form.professeur }}
+                    </div>
+                    <div class="form-group text-center">
+                        <input type="submit" value="Créer" class="btn btn-primary py-3 px-5">
+                    </div>
+                </form>
+                <p class="link text-center"><a href="{% url 'list_horaires' %}"><i class="bi bi-arrow-left"></i> Retour à la liste des horaires</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Liste des Notes{% endblock %}
+{% block content %}
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Liste des Notes</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>Liste des Notes <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8 text-center heading-section ftco-animate">
+                <h2 class="mb-4">{{ cours.sigle }} - {{ cours.titre }}</h2>
+                <p>Voici les notes associées à ce cours.</p>
+            </div>
+        </div>
+        <div class="row">
+            {% if notes %}
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Étudiant</th>
+                            <th>Évaluation</th>
+                            <th>Note Obtenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in notes %}
+                            <tr>
+                                <td>{{ note.etudiant.nom }}</td>
+                                <td>{{ note.evaluation.titre }}</td>
+                                <td>{{ note.note_obtenue }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="col-md-12 text-center">
+                    <p>Aucune note disponible pour ce cours.</p>
+                    <p class="link"><a href="{{ request.META.HTTP_REFERER }}">Retour</a></p>
+
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

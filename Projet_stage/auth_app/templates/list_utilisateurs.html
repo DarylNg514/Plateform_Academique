@@ -20,14 +20,15 @@
 
 <section class="ftco-section">
     <div class="container-fluid px-4">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         <div class="row">
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+           
             {% for utilisateur in utilisateurs %}
             {% if not role or utilisateur.role != 'Candidat' or utilisateur.status != False %}
             <div class="col-md-3 course ftco-animate">
@@ -77,6 +78,44 @@
                     </p>
                     {% endif %}
                     {%if utilisateur.role == 'Candidat'%}  
+                    <p><strong>payment effectué :</strong> {% if utilisateur.frais_paye == False %} Non {% else %} Oui {% endif %}</p>
+                    <p><strong>Diplôme :</strong> 
+                        {% if utilisateur.diplome %}
+                        {% if ".pdf" in utilisateur.diplome.url %}
+                                <i class="fas fa-file-pdf"></i>
+                                <a href="{{ utilisateur.diplome.url }}" target="_blank">Télécharger le fichier PDF <i class="fas fa-download"></i></a>
+                        {% elif ".doc" in utilisateur.diplome.url or ".docx" in utilisateur.diplome.url %}
+                        <i class="fas fa-file-word"></i>
+                        <a href="{{ utilisateur.diplome.url }}" target="_blank">Télécharger le fichier Word <i class="fas fa-download"></i></a>
+                        {% elif ".jpg" in utilisateur.diplome.url or ".jpeg" in utilisateur.diplome.url or ".png" in utilisateur.diplome.url %}
+                            <img src="{{ utilisateur.diplome.url }}" alt="Diplôme" width="200">
+                        {% else %}
+                            <a href="{{ utilisateur.diplome.url }}" target="_blank">Télécharger le fichier <i class="fas fa-download"></i></a>
+                        {% endif %}
+                    {% else %}
+                        Non assigné
+                    {% endif %}
+                    </p>
+
+                    <p><strong>Passeport :</strong> 
+                        {% if utilisateur.passport %}
+                    {% if ".pdf" in utilisateur.passport.url %}
+                       <i class="fas fa-file-pdf"></i>     
+                        <a href="{{ utilisateur.passport.url }}" target="_blank">Télécharger le fichier PDF <i class="fas fa-download"></i></a>
+                        {% elif ".doc" in utilisateur.passport.url or ".docx" in utilisateur.passport.url %}
+                        <i class="fas fa-file-word"></i>
+                        <a href="{{ utilisateur.passport.url }}" target="_blank">Télécharger le fichier Word <i class="fas fa-download"></i></a>
+                        {% elif ".jpg" in utilisateur.passport.url or ".jpeg" in utilisateur.passport.url or ".png" in utilisateur.passport.url %}
+                            <img src="{{ utilisateur.passport.url }}" alt="Passeport" width="200">
+                        {% else %}
+                        <a href="{{ utilisateur.passport.url }}" target="_blank">Télécharger le fichier <i class="fas fa-download"></i></a>
+                        {% endif %}
+                    {% else %}
+                         Non assigné
+                    {% endif %}
+                    </p>
+
+                   
                     <p><strong>Status de la demande d'admission:</strong>
                         {% if utilisateur.status is None %}
                             <span class="badge badge-warning">En attente</span>
@@ -92,9 +131,14 @@
                         <a href="{% url 'accepter_candidat' utilisateur.id %}" class="btn btn-success me-2">
                             <i class="bi bi-check-lg"></i> 
                         </a>
-                        <a href="{% url 'refuser_candidat' utilisateur.id %}" class="btn btn-primary me-2">
+                        <a href="#" class="btn btn-primary me-2" onclick="showCommentField({{ utilisateur.id }})">
                             <i class="bi bi-x-lg"></i> 
                         </a>
+                        <form method="post" action="{% url 'refuser_candidat' utilisateur.id %}" id="rejectForm-{{ utilisateur.id }}" style="display: none;">
+                            {% csrf_token %}
+                            <textarea name="comment" class="form-control" placeholder="Motif du rejet" required></textarea>
+                            <button type="submit" class="btn btn-danger mt-2">Envoyer</button>
+                        </form>
                         {%else%}
                         <a href="{% url 'update_utilisateur' utilisateur.id %}" class="btn btn-primary me-2">
                             <i class="bi bi-pencil-square"></i> 
@@ -125,6 +169,13 @@
         {%endif%}
         {%endif%}
     </div>
+    <script>
+        function showCommentField(userId) {
+          const form = document.getElementById('rejectForm-' + userId);
+          form.style.display = 'block';  // Affiche le champ de commentaire
+        }
+      </script>
+      
 </section>
 
 {% endblock %}

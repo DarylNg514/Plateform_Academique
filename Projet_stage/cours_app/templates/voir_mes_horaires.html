@@ -1,0 +1,56 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Mes Horaires{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Mes Horaires</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span><span>Liste des Horaires <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container-fluid px-4">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <div class="row">
+            {% if horaires %}
+                {% for horaire in horaires %}
+                <div class="col-md-4 col-lg-3 d-flex ftco-animate">
+                    <div class="card shadow-sm p-3 mb-4 bg-white rounded w-100">
+                        <div class="card-header text-center bg-primary text-white">
+                            <h3 class="mb-0">{{ horaire.cours.sigle }}</h3>
+                            <p class="mb-0">{{ horaire.cours.titre }}</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="bi bi-calendar-week"></i> <strong>Jour :</strong> {{ horaire.jour }}</li>
+                                <li class="mb-2"><i class="bi bi-clock"></i> <strong>Heure :</strong> {{ horaire.heure_debut }} - {{ horaire.heure_fin }}</li>
+                                <li class="mb-2"><i class="bi bi-geo-alt"></i> <strong>Salle :</strong> {{ horaire.salle.nom }} ({{ horaire.salle.batiment }})</li>
+                                <li class="mb-2"><i class="bi bi-person"></i> <strong>Professeur :</strong> {{ horaire.professeur.prenom }} {{ horaire.professeur.nom }}</li>
+                            </ul>
+                        </div>
+                        
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-md-12 text-center">
+                    <p>Aucun horaire disponible pour le moment.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+</section>
+
+{% endblock %}

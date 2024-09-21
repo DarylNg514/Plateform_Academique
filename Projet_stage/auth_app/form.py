@@ -5,6 +5,11 @@ import re
 from datetime import datetime
 
 class UtilisateurForm(UserCreationForm):
+    username = forms.CharField(
+        label="Nom d'utilisateur",
+        max_length=150,
+        help_text='',  # Supprime le message "Required..."
+    )
     prenom = forms.CharField(max_length=30, required=True)
     nom = forms.CharField(max_length=30, required=True)
     telephone = forms.CharField(max_length=15, required=True)
@@ -22,9 +27,7 @@ class UtilisateurForm(UserCreationForm):
         widget=forms.CheckboxSelectMultiple,  # Utilisation de cases à cocher pour permettre la sélection multiple
         label="Programmes"
     )    
-    session = forms.ModelChoiceField(queryset=Session.objects.all(), required=False)
-    domaine = forms.ModelChoiceField(queryset=Domaine.objects.none(), required=False)
-   
+    session = forms.ModelChoiceField(queryset=Session.objects.all(), required=False)   
     password1 = forms.CharField(
         label="Password",
         strip=False,
@@ -38,7 +41,7 @@ class UtilisateurForm(UserCreationForm):
 
     class Meta:
         model = Utilisateur
-        fields = ['username','image', 'prenom', 'nom', 'email', 'telephone', 'date_de_naissance', 'adresse', 'code_postal', 'sex', 'programme', 'session']
+        fields = ['username','image', 'prenom', 'nom', 'email', 'telephone', 'date_de_naissance', 'adresse', 'code_postal', 'sex', 'programme', 'session','domaine']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -47,7 +50,7 @@ class UtilisateurForm(UserCreationForm):
         # Essayez de supprimer le champ par son nom exact si détecté
         if 'usable_password' in self.fields:
             del self.fields['usable_password']
-        
+            
         # Initialiser les domaines en fonction des programmes choisis
         programmes = self.data.getlist('programme') or self.initial.get('programme')
         if programmes:
@@ -122,6 +125,11 @@ class UtilisateurForm(UserCreationForm):
 
 
 class UtilisateurChangeForm(UserChangeForm):
+    username = forms.CharField(
+        label="Nom d'utilisateur",
+        max_length=150,
+        help_text='',  # Supprime le message "Required..."
+    )
     password = None 
     prenom = forms.CharField(max_length=30, required=True)
     nom = forms.CharField(max_length=30, required=True)
@@ -259,6 +267,11 @@ class SessionForm(forms.ModelForm):
     
     
 class CandidatForm(UserCreationForm):
+    username = forms.CharField(
+        label="Nom d'utilisateur",
+        max_length=150,
+        help_text='',  # Supprime le message "Required..."
+    )
     email = forms.EmailField(
         label="Email",
         required=True
@@ -282,10 +295,13 @@ class CandidatForm(UserCreationForm):
     )
     session = forms.ModelChoiceField(queryset=Session.objects.all(), required=False)
     domaine = forms.ModelChoiceField(queryset=Domaine.objects.none(), required=False)
+    diplome = forms.FileField(required=False, label="Diplôme")
+    passport = forms.FileField(required=False, label="Passeport")
+
 
     class Meta:
         model = Utilisateur
-        fields = ['username','image', 'prenom', 'nom', 'email', 'telephone', 'date_de_naissance', 'adresse', 'code_postal', 'sex', 'programme', 'session','domaine']
+        fields = ['username','image', 'prenom', 'nom', 'email', 'telephone', 'date_de_naissance', 'adresse', 'code_postal', 'sex', 'programme', 'session','domaine','diplome','passport']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -353,11 +369,25 @@ class CandidatForm(UserCreationForm):
         if programmes.count() > 3:
             raise forms.ValidationError("Vous pouvez sélectionner un maximum de 3 programmes.")
         return programmes    
+    
+    def clean_diplome(self):
+        diplome = self.cleaned_data.get('diplome')
+        if diplome:
+            if not diplome.name.endswith(('.pdf', '.doc', '.docx')):
+                raise forms.ValidationError("Seuls les fichiers PDF et Word (.doc, .docx) sont autorisés pour le diplôme.")
+        return diplome
+
+    def clean_passport(self):
+        passport = self.cleaned_data.get('passport')
+        if passport:
+            if not passport.name.endswith(('.pdf', '.doc', '.docx')):
+                raise forms.ValidationError("Seuls les fichiers PDF et Word (.doc, .docx) sont autorisés pour le passeport.")
+        return passport
 
 class MessageForm(forms.ModelForm):
     destinataire = forms.ModelChoiceField(
-        queryset=Utilisateur.objects.none(), 
-        required=True, 
+        queryset=Utilisateur.objects.none(),
+        required=True,
         label="Destinataire"
     )
     sujet = forms.CharField(max_length=255, required=False, label="Sujet")
@@ -372,25 +402,52 @@ class MessageForm(forms.ModelForm):
         self.expéditeur = kwargs.pop('expéditeur', None)
         super().__init__(*args, **kwargs)
 
-        # Filtrer les destinataires et ajuster le label pour inclure le rôle, programme, session et domaine
         if self.expéditeur:
-            if self.expéditeur.role == 'Candidat':
-                queryset = Utilisateur.objects.filter(role='Admin')
+            # Filtrer les destinataires en fonction du rôle de l'expéditeur
+            if self.expéditeur.role == 'Etudiant':
+                # Tous les admins
+                admin_users = Utilisateur.objects.filter(role='Admin')
+                # Etudiants et enseignants du même domaine
+                etudiants_enseignants = Utilisateur.objects.filter(
+                    models.Q(role='Etudiant') | models.Q(role='Enseignant'),
+                    domaine__in=self.expéditeur.domaine.all()
+                ).distinct()
+                # Combiner les deux ensembles de résultats
+                queryset = admin_users | etudiants_enseignants
+
+            elif self.expéditeur.role == 'Enseignant':
+                # Tous les admins
+                admin_users = Utilisateur.objects.filter(role='Admin')
+                # Enseignants et étudiants du même domaine
+                enseignants_etudiants = Utilisateur.objects.filter(
+                    models.Q(role='Enseignant') | models.Q(role='Etudiant'),
+                    domaine__in=self.expéditeur.domaine.all()
+                ).distinct()
+                # Combiner les deux ensembles de résultats
+                queryset = admin_users | enseignants_etudiants
+
             else:
+                # Par défaut, tous les utilisateurs pour les autres rôles (Admin, etc.)
                 queryset = Utilisateur.objects.all()
 
+            # Appliquer le queryset filtré
             self.fields['destinataire'].queryset = queryset
             self.fields['destinataire'].label_from_instance = self.label_from_instance_with_details
 
     def label_from_instance_with_details(self, obj):
         # Construction du label avec le rôle, programme, session, et domaine
         label = f"{obj.username} ({obj.get_role_display()})"
-        if obj.programme:
-            label += f" - Programme: {obj.programme.code_programme}"
-        if obj.session:
-            label += f" - Session: {obj.session.code_session}"
-        if hasattr(obj, 'domaine') and obj.domaine:
-            label += f" - Domaine: {obj.domaine.code_programme}"
+        if hasattr(obj, 'programme') and isinstance(obj.programme, models.Manager):
+            programmes = ', '.join([p.code_programme for p in obj.programme.all()])
+            label += f" - Programme(s): {programmes}"
+        '''
+        if hasattr(obj, 'session') and isinstance(obj.session, models.Manager):
+            sessions = ', '.join([s.code_session for s in obj.session.all()])
+            label += f" - Session(s): {sessions}"
+        '''
+        if hasattr(obj, 'domaine') and isinstance(obj.domaine, models.Manager):
+            domaines = ', '.join([d.code_programme for d in obj.domaine.all()])
+            label += f" - Domaine(s): {domaines}"
         return label
 
     def save(self, commit=True):
@@ -409,3 +466,8 @@ class ProgrammeChoiceForm(forms.Form):
         programmes = kwargs.pop('programmes')
         super().__init__(*args, **kwargs)
         self.fields['programme'].queryset = programmes
+        
+class FraisInscriptionForm(forms.ModelForm):
+    class Meta:
+        model = Frais_admission
+        fields = ['montant']

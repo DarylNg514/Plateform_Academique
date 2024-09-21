@@ -1,38 +1,135 @@
-{% extends 'base.html' %}
-
-{% block title %}Horaires des Cours{% endblock %}
-
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Liste des Horaires{% endblock %}
 {% block content %}
-<h2>Horaires des Cours</h2>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Cours</th>
-            <th>Jour</th>
-            <th>Heure Début</th>
-            <th>Heure Fin</th>
-            <th>Salle</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for horaire in horaires %}
-        <tr>
-            <td>{{ horaire.cours.titre }}</td>
-            <td>{{ horaire.jour }}</td>
-            <td>{{ horaire.heure_debut }}</td>
-            <td>{{ horaire.heure_fin }}</td>
-            <td>{{ horaire.salle }}</td>
-            <td>
-                <a href="{% url 'update_horaire' horaire.id %}" class="btn btn-primary btn-sm">Modifier</a>
-                <form method="post" action="{% url 'delete_horaire' horaire.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'planifier_horaire' %}" class="btn btn-success">Planifier un nouvel horaire</a>
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Horaires des Cours</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span><span>Horaires des Cours <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        <div class="schedule">
+            {% if horaires %}
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-8 text-center heading-section ftco-animate">
+                        <h2 class="mb-4">Emploi du Temps Semaine</h2>
+                        <p>Visualisez les horaires de cours organisés par jour et heure.</p>
+                    </div>
+                </div>
+                {% for jour, horaires_jour in horaires.items %}
+                    <div class="row mb-5">
+                        <div class="col-md-12">
+                            <h3 class="text-center text-uppercase bg-light p-2">{{ jour }}</h3>
+                            <table class="table table-bordered table-hover text-center">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Heure</th>
+                                        <th>Cours</th>
+                                        <th>Salle</th>
+                                        <th>Professeurs</th>
+                                        {% if utilisateur.role == 'Admin' %}
+                                            <th>Actions</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for horaire in horaires_jour %}
+                                        <tr>
+                                            <td>{{ horaire.heure_debut }} - {{ horaire.heure_fin }}</td>
+                                            <td>{{ horaire.cours.sigle }}<br><small>{{ horaire.cours.titre }}</small></td>
+                                            <td>{{ horaire.salle.nom }}<br><small>Batiment {{ horaire.salle.batiment }}</small></td>
+                                            <td>
+                                                <ul class="list-unstyled">
+                                                    {% for prof in horaire.cours.professeur.all %}
+                                                        <li>{{ prof.prenom }} {{ prof.nom }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </td>
+                                            {% if utilisateur.role == 'Admin' %}
+                                                <td>
+                                                    <a href="{% url 'update_horaire' horaire.id %}" class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+                                                    <form method="post" action="{% url 'delete_horaire' horaire.id %}" style="display: inline;">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p>Aucun horaire disponible pour le moment.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if utilisateur.role == 'Admin' %}
+            <div class="row mt-4">
+                <div class="col text-center">
+                    <a href="{% url 'create_horaire' %}" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-plus-lg"></i> Ajouter un horaire
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .schedule {
+        margin-top: 20px;
+    }
+    table.table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    table.table th, table.table td {
+        border: 1px solid #dee2e6;
+        padding: 12px;
+    }
+    table.table th {
+        background-color: #343a40;
+        color: #fff;
+    }
+    .thead-dark th {
+        background-color: #343a40;
+        color: #fff;
+    }
+    .text-uppercase {
+        text-transform: uppercase;
+    }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+</style>
+
 {% endblock %}

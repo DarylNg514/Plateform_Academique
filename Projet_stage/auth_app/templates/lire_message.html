@@ -3,14 +3,14 @@
 {% block title %}Lire Message{% endblock %}
 {% block content %}
 
-<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg');">
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
     <div class="overlay"></div>
     <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
             <div class="col-md-9 ftco-animate text-center">
                 <h1 class="mb-2 bread">Lire Message</h1>
                 <p class="breadcrumbs">
-                    <span class="mr-2"><a href="{% url 'acceuil' %}">Home <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
                     <span>Lire Message <i class="ion-ios-arrow-forward"></i></span>
                 </p>
             </div>
@@ -20,26 +20,17 @@
 
 <section class="ftco-section bg-light">
     <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="blog-entry">
-                    <div class="text bg-white p-4">
-                        <h3 class="heading">{{ message.sujet }}</h3>
-                        <p>
-                            <strong>De:</strong> {{ message.expéditeur.username }} 
+        <div class="row justify-content-center">
+            <div class="col-md-8 ftco-animate">
+                <div class="card shadow-lg">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ message.sujet }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <i class="bi bi-person-circle"></i> {{ message.expéditeur.username }} 
                             ({{ message.expéditeur.get_role_display }})
-                            {% if message.expéditeur.programme %}
-                                , Programme : {{ message.expéditeur.programme.intitule }}
-                            {% endif %}
-                            {% if message.expéditeur.session %}
-                                , Session : {{ message.expéditeur.session.code_session }}
-                            {% endif %}
-                            {% if message.expéditeur.domaine %}
-                                , Domaine : {{ message.expéditeur.domaine.intitule }}
-                            {% endif %}
-                        </p>
-                                                <p><strong>Date:</strong> {{ message.date_formatee }}</p>
-                        <p>{{ message.contenu }}</p>
+                        </h6>
+                        <p class="card-text mt-3">{{ message.contenu }}</p>
+                        <p class="text-muted"><small>Envoyé le: {{ message.date_formatee }}</small></p>
                         <a href="{% url 'afficher_messages' %}" class="btn btn-primary">
                             Retour à la liste des messages
                         </a>
@@ -49,5 +40,16 @@
         </div>
     </div>
 </section>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .card:hover {
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    }
+</style>
 
 {% endblock %}

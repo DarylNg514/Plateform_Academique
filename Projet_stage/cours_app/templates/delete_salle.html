@@ -1,0 +1,35 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Supprimer une Salle{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Supprimer une Salle</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span><span>Supprimer une Salle <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section ftco-no-pt ftco-no-pb contact-section">
+    <div class="container">
+        <div class="row d-flex align-items-stretch no-gutters">
+            <div class="p-4 p-md-5 order-md-last bg-light">
+                <h3>Voulez-vous vraiment supprimer la salle {{ salle.nom }} ?</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-danger py-3 px-5">Supprimer</button>
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary py-3 px-5">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

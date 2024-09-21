@@ -2,7 +2,7 @@
 {% load static %}
 <html lang="fr">
   <head>
-    <title>{%block title%}Université NG-D {%endblock%}</title>
+    <title>{%block title%}Institut NG-D {%endblock%}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
@@ -21,13 +21,12 @@
     
     <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
     <link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         crossorigin="anonymous"></script>
@@ -42,7 +41,7 @@
     	<div class="container">
     		<div class="row no-gutters d-flex align-items-center align-items-stretch">
     			<div class="col-md-4 d-flex align-items-center py-4">
-    				<a class="navbar-brand" href="index.html">NG-D. <span>Université</span></a>
+    				<a class="navbar-brand" href="{% url 'acceuil' %}">NG-D. <span>Institut</span></a>
     			</div>
                 
 	    		<div class="col-lg-8 d-block">
@@ -82,7 +81,7 @@
 					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
 					    	<div class="text">
 					    		<span>Email</span>
-						    	<span>NgueufangDaryl99@email.com</span>
+						    	<span>NG-Dinstitut@Gmail.com</span>
 						    </div>
 					    </div>
 					    <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
@@ -135,40 +134,39 @@
               <li class="nav-item"><a href="{% url 'list_candidats' %}" class="nav-link">Gestion Candidate</a></li>  
               <li class="nav-item"><a href="{% url 'list_enseignants' %}" class="nav-link">Gestion Enseignant</a></li>  
               <li class="nav-item"><a href="{% url 'list_etudiants' %}" class="nav-link">Gestion Etudiant</a></li>  
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Cours</a></li>  
+              <li class="nav-item"><a href="{% url 'list_cours' %}" class="nav-link">Gestion Cours</a></li>  
               <li class="nav-item"><a href="{% url 'list_sessions' %}" class="nav-link">Gestion Session</a></li>
               <li class="nav-item"><a href="{% url 'list_domaines' %}" class="nav-link">Gestion Domaine</a></li>
               <li class="nav-item"><a href="{% url 'list_programmes' %}" class="nav-link">Gestion Programme</a></li>
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Horaire</a></li>
+              <li class="nav-item"><a href="{% url 'list_salles' %}" class="nav-link">Gestion salles</a></li>
+              <li class="nav-item"><a href="{% url 'list_groupes' %}" class="nav-link">Gestion Groupes</a></li>
+              <li class="nav-item"><a href="{% url 'changer_frais_inscription' %}" class="nav-link">changer frais d'admission</a></li>
 
               {% elif user.role == 'Enseignant'  %}
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion notes de cours</a></li>  
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion resultat etudiant</a></li>  
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Devoirs</a></li>  
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Session</a></li>
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion Programme</a></li>
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Mon Horaire</a></li>
+              <li class="nav-item"><a href="{% url 'list_cours' %}" class="nav-link">Liste des cours</a></li>
+              <li class="nav-item"><a href="{% url 'mes_cours_professeur' %}" class="nav-link">Mes cours</a></li>
 
               {% elif user.role == 'Etudiant'  %}
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Consulter mes notes de cours</a></li>  
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Consulter mes resultat </a></li>  
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Gestion de mes cours</a></li>
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">Mon Horaire</a></li>
+              <li class="nav-item"><a href="{% url 'list_cours' %}" class="nav-link">Liste des cours</a></li>
+              <li class="nav-item"><a href="{% url 'mes_cours_etudiant' %}" class="nav-link">Mes cours</a></li>
               {% else %}
               <li class="nav-item active"><a href="{% url 'acceuil' %}" class="nav-link pl-0">Accueil</a></li>
-	        	<li class="nav-item"><a href="about.html" class="nav-link">À propos</a></li>
-	        	<li class="nav-item"><a href="courses.html" class="nav-link">Cours</a></li>
-	        	<li class="nav-item"><a href="teacher.html" class="nav-link">Personnel</a></li>
-	        	<li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
-	          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+              <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">À propos</a></li>
+              <li class="nav-item"><a href="{% url 'cours' %}" class="nav-link">Cours</a></li>
+              <li class="nav-item"><a href="{% url 'personnel' %}" class="nav-link">Enseignants</a></li>
+              <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
+              <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
               {% endif %}
+              <li class="nav-item"><a href="{% url 'list_horaires' %}" class="nav-link">Horaires</a></li>
+
               {% else %}
-              <li class="nav-item active"><a href="{% url 'acceuil' %}" class="nav-link pl-0">Accueil</a></li>
-	        	<li class="nav-item"><a href="about.html" class="nav-link">À propos</a></li>
-	        	<li class="nav-item"><a href="courses.html" class="nav-link">Cours</a></li>
-	        	<li class="nav-item"><a href="teacher.html" class="nav-link">Personnel</a></li>
-	        	<li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
-	          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+
+            <li class="nav-item active"><a href="{% url 'acceuil' %}" class="nav-link pl-0">Accueil</a></li>
+	        	<li class="nav-item"><a href="{% url 'about' %}" class="nav-link">À propos</a></li>
+	        	<li class="nav-item"><a href="{% url 'cours' %}" class="nav-link">Cours</a></li>
+	        	<li class="nav-item"><a href="{% url 'personnel' %}" class="nav-link">Enseignants</a></li>
+	        	<li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
+	          <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
               <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">connexion</a></li>  
               {% endif %}
 	        </ul>
@@ -188,7 +186,7 @@
 	              <ul>
 	                <li><span class="icon icon-map-marker"></span><span class="text">203 Rue Fictive, Mountain View, San Francisco, Californie, USA</span></li>
 	                <li><a href="#"><span class="icon icon-phone"></span><span class="text">+1 514 467 0633</span></a></li>
-	                <li><a href="#"><span class="icon icon-envelope"></span><span class="text">NgueufangDaryl99@Gmail.com</span></a></li>
+	                <li><a href="#"><span class="icon icon-envelope"></span><span class="text">NG-Dinstitut@Gmail.com</span></a></li>
 	              </ul>
 	            </div>
             </div>

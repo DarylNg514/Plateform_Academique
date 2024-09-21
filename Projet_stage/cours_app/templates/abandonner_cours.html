@@ -1,0 +1,41 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Abandonner un Cours{% endblock %}
+{% block content %}
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Abandonner un Cours</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>Abandonner un Cours <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Attention!</h4>
+                    <p>Êtes-vous sûr de vouloir abandonner le cours <strong>{{ inscription.cours.sigle }}</strong>?</p>
+                    <hr>
+                    <p class="mb-0">Cette action est irréversible et apparaîtra sur votre relevé de notes.</p>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-danger">Oui, abandonner ce cours</button>
+                        <a href="{% url 'mes_cours_etudiant' %}" class="btn btn-secondary">Non, retourner à mes cours</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

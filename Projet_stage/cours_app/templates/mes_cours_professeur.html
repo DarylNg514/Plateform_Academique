@@ -1,0 +1,120 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Mes Cours{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Mes Cours</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>Mes Cours <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        {% if cours_etudiants_pagination %}
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-8 text-center heading-section ftco-animate">
+                    <h2 class="mb-4">Liste des Cours</h2>
+                    <p>Voici vos cours et les étudiants inscrits.</p>
+                </div>
+            </div>
+            {% for cours, page_obj in cours_etudiants_pagination.items %}
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <h3 class="text-center">{{ cours.sigle }} - {{ cours.titre }}</h3>
+                        <p class="text-center"><strong>Session :</strong> 
+                            {% for session in cours.session.all %}
+                                {{ session.code_session }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <p class="text-center"><strong>Groupe :</strong> 
+                            {{ cours_groupes.cours.id }}
+                        </p>
+                        
+                        <!-- Boutons pour gérer le cours -->
+                        <div class="text-center mb-3">
+                            <a href="{% url 'liste_evaluations' cours.id %}" class="btn btn-info me-2">
+                                <i class="bi bi-list-task"></i> Liste des Évaluations
+                            </a>
+                            <a href="{% url 'liste_documents' cours.id %}" class="btn btn-primary me-2">
+                                <i class="bi bi-folder"></i> Liste des Documents
+                            </a>
+                        </div>
+
+                        <table class="table table-bordered table-hover text-center">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Nom de l'Étudiant</th>
+                                    <th>Email</th>
+                                    <th>Date d'inscription</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for inscription in page_obj %}
+                                    <tr>
+                                        <td>{{ inscription.etudiant.get_full_name }}</td>
+                                        <td>{{ inscription.etudiant.email }}</td>
+                                        <td>{{ inscription.date_inscription }}</td>
+                                        <td>
+                                            <a href="{% url 'voir_etudiant' inscription.etudiant.id %}" class="btn btn-info btn-sm">
+                                                <i class="bi bi-eye"></i> Voir Détails
+                                            </a>
+                                            <a href="{% url 'assigner_note' inscription.etudiant.id %}" class="btn btn-success btn-sm">
+                                                <i class="bi bi-pencil-square"></i> Assigner Note
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                {% if not page_obj %}
+                                    <tr>
+                                        <td colspan="4">Aucun étudiant inscrit pour ce cours.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        <div class="pagination justify-content-center">
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page_{{ cours.id }}={{ page_obj.previous_page_number }}">&laquo; Précédent</a>
+                                    </li>
+                                {% endif %}
+                                {% for num in page_obj.paginator.page_range %}
+                                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                        <a class="page-link" href="?page_{{ cours.id }}={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page_{{ cours.id }}={{ page_obj.next_page_number }}">Suivant &raquo;</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p>Vous n'enseignez actuellement aucun cours.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

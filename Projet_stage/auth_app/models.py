@@ -33,6 +33,7 @@ class Candidat(models.Model):
     email = models.EmailField()
     programme = models.ForeignKey(Programme, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    
 
 class Utilisateur(AbstractUser):
     ROLES_CHOICES = [
@@ -60,7 +61,9 @@ class Utilisateur(AbstractUser):
     programme = models.ManyToManyField('Programme', blank=True) 
     session = models.ForeignKey(Session, on_delete=models.CASCADE, null=True, blank=True)
     domaine = models.ManyToManyField('Domaine', blank=True)
-
+    diplome = models.FileField(upload_to='documents/',default=None,blank=True, null=True)
+    passport = models.FileField(upload_to='documents/',default=None,blank=True, null=True)
+    frais_paye = models.BooleanField(default=False)  # Champ pour savoir si l'utilisateur a payé les frais d'admission
 
     def save(self, *args, **kwargs):
         # Définir is_staff et is_superuser à True par défaut si le rôle est 'Admin'
@@ -96,3 +99,10 @@ class Message(models.Model):
         verbose_name = "Message"
         verbose_name_plural = "Messages"
         
+
+class Frais_admission(models.Model):
+    montant = models.DecimalField(max_digits=10, decimal_places=2, default=100.00)
+    date_mise_a_jour = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Frais d'admission : {self.montant} €"

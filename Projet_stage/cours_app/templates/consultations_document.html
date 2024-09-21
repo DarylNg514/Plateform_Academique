@@ -1,0 +1,65 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Consultations du Document{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Consultations du Document</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>Consultations <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8 text-center heading-section ftco-animate">
+                <h2 class="mb-4">{{ document.titre }}</h2>
+                <p>Liste des étudiants ayant consulté ce document.</p>
+            </div>
+        </div>
+        <div class="row">
+            {% if consultations %}
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Nom de l'Étudiant</th>
+                            <th>Email</th>
+                            <th>Date de Consultation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for consultation in consultations %}
+                            <tr>
+                                <td>{{ consultation.etudiant.get_full_name }}</td>
+                                <td>{{ consultation.etudiant.email }}</td>
+                                <td>{{ consultation.date_consultation }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="col-md-12 text-center">
+                    <p>Aucune consultation enregistrée pour ce document.</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="row mt-4">
+            <div class="col text-center">
+                <a href="{% url 'liste_documents' document.cours.id %}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-arrow-left"></i> Retour à la liste des documents
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

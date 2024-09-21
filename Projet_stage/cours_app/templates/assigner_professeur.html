@@ -1,0 +1,49 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Assigner un Professeur{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Assigner un Professeur</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span><span>Assigner un Professeur <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="enseignant">Sélectionner un Enseignant :</label>
+                        <select name="enseignant" id="enseignant" class="form-control">
+                            {% for enseignant in enseignants %}
+                                <option value="{{ enseignant.id }}">{{ enseignant.nom }} ({{ enseignant.email }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="groupe">Sélectionner un Groupe :</label>
+                        <select name="groupe" id="groupe" class="form-control">
+                            {% for groupe in groupes %}
+                                <option value="{{ groupe.id }}">{{ groupe.nogroupe }} - {{ groupe.nom_groupe }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary">Assigner</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

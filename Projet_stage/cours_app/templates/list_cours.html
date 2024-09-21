@@ -1,0 +1,149 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Liste des Cours{% endblock %}
+{% block content %}
+
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">Liste des Cours</h1>
+                <p class="breadcrumbs">
+                    <span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span>Liste des Cours <i class="ion-ios-arrow-forward"></i></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section">
+    <div class="container-fluid px-4">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+        <div class="row">
+
+            {% if cours_liste %}
+                {% for cours in cours_liste %}
+                <div class="col-md-4 course ftco-animate">
+                    <div class="img" style="background-image: url('{% static 'images/cours.jpeg' %}');"></div>
+
+                    <div class="text pt-4">
+                        <h3>{{ cours.sigle }}</h3>
+                        
+                        <p><strong>Titre :</strong> {{ cours.titre }}</p>
+                        <p><strong>Description :</strong> {{ cours.description }}</p>
+                        
+                        <p><strong>Programme(s) :</strong> 
+                            {% for programme in cours.programme.all %}
+                                {{ programme.code_programme }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        
+                        <p><strong>Domaine(s) :</strong> 
+                            {% for domaine in cours.domaine.all %}
+                                {{ domaine.code_programme }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        
+                        <p><strong>Session(s) :</strong> 
+                            {% for session in cours.session.all %}
+                                {{ session.code_session }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+
+                        {% if cours.attributions.exists %}
+                        <p><strong>Professeur(s) :</strong> 
+                            {% for attribution in cours.attributions.all %}
+                                {% if attribution.professeur.sex == 'Homme' %}Mr. {% elif attribution.professeur.sex == 'Femme' %}Mme. {% endif %} 
+                                {{ attribution.professeur.nom }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}        
+                    
+                    {% if cours.attributions.exists %}
+                        <p><strong>Groupe(s) :</strong> 
+                            {% for attribution in cours.attributions.all %}
+                                {{ attribution.groupe.nom_groupe }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        {% endif %}
+                        
+                        {% if user.role == 'Admin' %}
+                        <div class="d-flex">
+                            <a href="{% url 'update_cours' cours.id %}" class="btn btn-primary me-2">
+                                <i class="bi bi-pencil-square"></i> 
+                            </a>
+                            <form method="post" action="{% url 'delete_cours' cours.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> 
+                                </button>
+                            </form>
+                        </div>
+                    
+                        <!-- Boutons pour voir les évaluations, les notes et les documents -->
+                        <div class="d-flex mt-3">
+                            <a href="{% url 'liste_evaluations' cours.id %}" class="btn btn-info me-2">
+                                <i class="bi bi-file-earmark-text"></i> Évaluations
+                            </a>
+                            <a href="{% url 'list_notes_cours' cours.id %}" class="btn btn-warning me-2">
+                                <i class="bi bi-pencil"></i> Notes
+                            </a>
+                            <a href="{% url 'liste_documents' cours.id %}" class="btn btn-secondary me-2">
+                                <i class="bi bi-folder"></i> Documents
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.role == 'Admin' %}
+                        <div class="d-flex mt-2">
+                            <a href="{% url 'assigner_professeur' cours.id %}" class="btn btn-warning me-2">
+                                <i class="bi bi-person-plus"></i> Attribuer un Professeur
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.role == 'Etudiant' %}
+                        <div class="d-flex mt-2">
+                            <a href="{% url 'inscrire_cours' cours.id %}" class="btn btn-success me-2">
+                                <i class="bi bi-check-square"></i> S'inscrire
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if user.role == 'Enseignant' %}
+                                <!-- Bouton pour voir les étudiants inscrits -->
+                                <a href="{% url 'voir_etudiants_cours' cours.id %}" class="btn btn-info me-2">
+                                    <i class="bi bi-person-check"></i> Voir les étudiants
+                                </a>
+                            {% endif %}
+
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-md-12 text-center">
+                    <p>Aucun cours disponible pour le moment.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if user.role == 'Admin' %}
+        <div class="row mt-4">
+            <div class="col text-center">
+                <a href="{% url 'create_cours' %}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-plus-lg"></i> Ajouter un cours
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

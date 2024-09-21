@@ -20,14 +20,15 @@
 
 <section class="ftco-section bg-light">
     <div class="container">
-        <div class="row">
-            {% if messages %}
+        {% if messages %}
         <ul class="messages">
             {% for message in messages %}
                 <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
         </ul>
     {% endif %}
+        <div class="row">
+            
             <div class="col-md-12 ftco-animate">
                 {% if is_editing %}
                 <form method="post" enctype="multipart/form-data">

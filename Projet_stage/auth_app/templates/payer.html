@@ -1,0 +1,118 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Paiement{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement des frais d'admission</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f4f8;
+        }
+
+        section {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #555;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        #paypal-payment-button {
+            margin-top: 30px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        /* PayPal button styling */
+        .paypal-button-container {
+            display: inline-block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <section>
+            {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+            <h1>Paiement des frais d'admission</h1>
+            <p><strong>Utilisateur:</strong> {{ utilisateur.username }}</p>
+            <p><strong>Frais d'admission:</strong> {{ frais_admission }} €</p>
+            <div class="paypal-button-container">
+                <div id="paypal-payment-button"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AV1Ca15_zDrbXNwGEsO-9nfiH89O3hYI_xWpbCQVW-EBBJ94mH3YmEFbCoMyyyMmX4dS7wUEC_wRF4Ah&currency=EUR"></script>
+<script>
+    const paypalButton = document.getElementById('paypal-payment-button');
+    afficherPayPal(paypalButton, "{{ frais_admission }}");
+
+    function afficherPayPal(paypalButton, total) {
+        paypal.Buttons({
+            style: {
+                color: 'blue',
+                shape: 'pill',
+                label: 'pay'
+            },
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: total
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    console.log(details);
+                    window.location.replace("{% url 'paiement_succes_inscription' %}");
+                });
+            }
+        }).render(paypalButton);
+    }
+</script>
+</body>
+
+</html>
+{% endblock %}
