@@ -39,7 +39,7 @@
                     <tbody>
                         {% for consultation in consultations %}
                             <tr>
-                                <td>{{ consultation.etudiant.get_full_name }}</td>
+                                <td>{{ consultation.etudiant.nom }} {{ consultation.etudiant.prenom }}</td>
                                 <td>{{ consultation.etudiant.email }}</td>
                                 <td>{{ consultation.date_consultation }}</td>
                             </tr>

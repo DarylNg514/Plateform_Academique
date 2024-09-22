@@ -29,11 +29,11 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '.ngrok-free.app',
-    'e015-142-126-12-98.ngrok-free.app',  # Add your Ngrok URL here
+    'alpaca-robust-shrew.ngrok-free.app',  # Add your Ngrok URL here
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://e015-142-126-12-98.ngrok-free.app',  # Add your Ngrok URL here
+    'https://alpaca-robust-shrew.ngrok-free.app',  # Add your Ngrok URL here
 ]
 
 # Application definition

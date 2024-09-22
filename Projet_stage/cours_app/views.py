@@ -343,15 +343,25 @@ def delete_evaluation(request, evaluation_id):
 
 def liste_soumissions(request, evaluation_id):
     evaluation = get_object_or_404(Evaluation, id=evaluation_id)
-    if request.user.role != 'Enseignant':
+    if request.user.role == 'Etudiant':
         return redirect('acceuil')  # Rediriger si l'utilisateur n'est pas un enseignant
 
+    # Récupérer toutes les soumissions pour l'évaluation
     soumissions = SoumissionEvaluation.objects.filter(evaluation=evaluation)
-
+    
+    # Récupérer toutes les notes pour l'évaluation
+    notes = Note.objects.filter(evaluation=evaluation)
+    
+    # Créer un dictionnaire des notes avec l'ID de l'étudiant comme clé
+    notes_par_etudiant = {note.etudiant.id: note for note in notes}
+    
+    # Passer le dictionnaire des notes au template
     return render(request, 'liste_soumissions.html', {
         'evaluation': evaluation,
         'soumissions': soumissions,
+        'notes_par_etudiant': notes_par_etudiant,  # Dictionnaire des notes par étudiant
     })
+
 
 def soumettre_evaluation(request, evaluation_id):
     evaluation = get_object_or_404(Evaluation, id=evaluation_id)
@@ -440,7 +450,7 @@ def consulter_document(request, document_id):
 # Vue pour voir ceux qui ont consulter un document par un enseignant
 def consultations_document(request, document_id):
     document = get_object_or_404(CoursDocument, id=document_id)
-    if request.user.role != 'Enseignant':
+    if request.user.role == 'Etudiant':
         return redirect('acceuil')  # Rediriger si l'utilisateur n'est pas un enseignant
 
     # Récupérer les consultations pour ce document
@@ -479,18 +489,25 @@ def assigner_note(request, etudiant_id):
     evaluation = get_object_or_404(Evaluation, id=evaluation_id)
 
     # Vérifier si la note existe déjà
-    note, created = Note.objects.get_or_create(evaluation=evaluation, etudiant=etudiant)
+    note, created = Note.objects.get_or_create(evaluation=evaluation, etudiant=etudiant, defaults={'note_obtenue': 0, 'est_attribuee': False})
 
     if request.method == 'POST':
-        form = NoteForm(request.POST, instance=note)
+        form = NoteForm(request.POST, instance=note, evaluation=evaluation)
         if form.is_valid():
-            form.save()
+            note = form.save(commit=False)
+            note.est_attribuee = True  # Marquer la note comme attribuée
+            note.save()
             messages.success(request, f'Note attribuée avec succès pour {etudiant.get_full_name()}')
             return redirect('liste_soumissions', evaluation_id=evaluation.id)
     else:
-        form = NoteForm(instance=note)
+        form = NoteForm(instance=note, evaluation=evaluation)
 
-    return render(request, 'assigner_note.html', {'form': form, 'etudiant': etudiant, 'evaluation': evaluation})
+    return render(request, 'assigner_note.html', {
+        'form': form, 
+        'etudiant': etudiant, 
+        'evaluation': evaluation, 
+        'note_est_attribuee': note.est_attribuee  # Ajouter ce contexte pour le template
+    })
 
 
 def voir_notes_etudiant(request, cours_id):

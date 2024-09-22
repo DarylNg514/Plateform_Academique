@@ -20,6 +20,13 @@
 
 <section class="ftco-section">
     <div class="container">
+         {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         <div class="row justify-content-center mb-4">
             <div class="col-md-8 text-center heading-section ftco-animate">
                 <h2 class="mb-4">{{ evaluation.titre }}</h2>
@@ -46,9 +53,15 @@
                                 <td><a href="{{ soumission.fichier.url }}" target="_blank">{{ soumission.fichier.name }}</a></td>
                                 <td>{{ soumission.date_soumission }}</td>
                                 <td>
-                                    <a href="{% url 'assigner_note' soumission.etudiant.id %}?evaluation={{ evaluation.id }}" class="btn btn-success btn-sm">
-                                        <i class="bi bi-pencil-square"></i> Assigner Note
-                                    </a>
+                                    {% if soumission.etudiant.id in notes_par_etudiant %}
+                                        <a href="{% url 'assigner_note' soumission.etudiant.id %}?evaluation={{ evaluation.id }}" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-pencil-square"></i> Mettre à jour la Note
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'assigner_note' soumission.etudiant.id %}?evaluation={{ evaluation.id }}" class="btn btn-success btn-sm">
+                                            <i class="bi bi-pencil-square"></i> Assigner Note
+                                        </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}

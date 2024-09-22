@@ -20,6 +20,13 @@
 
 <section class="ftco-section bg-light">
     <div class="container">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         {% if cours_etudiants_pagination %}
             <div class="row justify-content-center mb-4">
                 <div class="col-md-8 text-center heading-section ftco-animate">
@@ -69,9 +76,7 @@
                                             <a href="{% url 'voir_etudiant' inscription.etudiant.id %}" class="btn btn-info btn-sm">
                                                 <i class="bi bi-eye"></i> Voir Détails
                                             </a>
-                                            <a href="{% url 'assigner_note' inscription.etudiant.id %}" class="btn btn-success btn-sm">
-                                                <i class="bi bi-pencil-square"></i> Assigner Note
-                                            </a>
+    
                                         </td>
                                     </tr>
                                 {% endfor %}

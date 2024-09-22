@@ -144,11 +144,22 @@ class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
         fields = ['note_obtenue']
+    
+    def __init__(self, *args, **kwargs):
+        self.evaluation = kwargs.pop('evaluation', None)
+        super().__init__(*args, **kwargs)
 
     def clean_note_obtenue(self):
         note_obtenue = self.cleaned_data.get('note_obtenue')
-        if note_obtenue < 0 or note_obtenue > 100:
-            raise forms.ValidationError("La note doit être comprise entre 0 et 100.")
+        
+        # Vérification que la note n'est pas inférieure à 0
+        if note_obtenue < 0:
+            raise forms.ValidationError("La note ne peut pas être inférieure à 0.")
+        
+        # Vérification que la note ne dépasse pas la note maximale de l'évaluation
+        if self.evaluation and note_obtenue > self.evaluation.note_maximale:
+            raise forms.ValidationError(f"La note ne peut pas dépasser la note maximale de {self.evaluation.note_maximale}.")
+        
         return note_obtenue
     
 # Formulaire pour créer un devoir

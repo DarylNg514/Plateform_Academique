@@ -144,6 +144,7 @@ class Note(models.Model):
     evaluation = models.ForeignKey(Evaluation, on_delete=models.CASCADE, related_name='notes')
     etudiant = models.ForeignKey(Utilisateur, limit_choices_to={'role': 'Etudiant'}, on_delete=models.CASCADE, related_name='notes')
     note_obtenue = models.DecimalField(max_digits=5, decimal_places=2)
+    est_attribuee = models.BooleanField(default=False)  # Indique si la note a déjà été attribuée
 
     def __str__(self):
         return f"{self.etudiant.username} - {self.evaluation.titre}: {self.note_obtenue}"

@@ -20,6 +20,13 @@
 
 <section class="ftco-section">
     <div class="container">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         <div class="row justify-content-center mb-4">
             <div class="col-md-8 text-center heading-section ftco-animate">
                 <h2 class="mb-4">{{ cours.sigle }} - {{ cours.titre }}</h2>
@@ -80,8 +87,21 @@
                     <i class="bi bi-plus-lg"></i> Ajouter un document
                 </a>
                 {% endif %}
-                <p class="link"><a href="{{ request.META.HTTP_REFERER }}">Retour</a></p>
 
+                 <!-- Bouton de retour en fonction du rôle de l'utilisateur -->
+                 {% if user.role == 'Admin' %}
+                 <a href="{% url 'list_cours' %}" class="btn btn-primary btn-lg mt-3">
+                     <i class="bi bi-arrow-left"></i> Retour à la liste des cours
+                 </a>
+                 {% elif user.role == 'Enseignant' %}
+                 <a href="{% url 'mes_cours_professeur' %}" class="btn btn-primary btn-lg mt-3">
+                     <i class="bi bi-arrow-left"></i> Retour à mes cours
+                 </a>
+                 {% elif user.role == 'Etudiant' %}
+                 <a href="{% url 'mes_cours_etudiant' %}" class="btn btn-primary btn-lg mt-3">
+                     <i class="bi bi-arrow-left"></i> Retour à mes cours
+                 </a>
+                 {% endif %}
             </div>
         </div>
     </div>

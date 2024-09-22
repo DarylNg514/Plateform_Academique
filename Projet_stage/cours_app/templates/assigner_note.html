@@ -32,7 +32,11 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary">Assigner Note</button>
+                        {% if note_est_attribuee %}
+                            <button type="submit" class="btn btn-warning">Mettre à jour la Note</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary">Assigner Note</button>
+                        {% endif %}
                     </div>
                 </form>
             </div>
