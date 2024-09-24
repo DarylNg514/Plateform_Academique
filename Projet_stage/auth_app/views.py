@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.http import JsonResponse
 from django.contrib import messages
+from collections import defaultdict
 from .form import *
 from .models import *
 from cours_app.models import *
@@ -223,6 +224,10 @@ def deconnexion(request):
 
 def list_utilisateurs(request):
     utilisateurs = Utilisateur.objects.all()
+    grouped_utilisateurs = defaultdict(list)
+    # Regrouper les utilisateurs par rôle
+    for utilisateur in utilisateurs:
+        grouped_utilisateurs[utilisateur.role].append(utilisateur)
     return render(request, 'list_utilisateurs.html', {'utilisateurs': utilisateurs})
 
 def list_utilisateurs_par_role(request, role):

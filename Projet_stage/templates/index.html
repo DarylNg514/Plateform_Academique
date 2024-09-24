@@ -1,286 +1,247 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="fr">
-  <head>
-    <title>{%block title%}Institut NG-D {%endblock%}</title>
+<head>
+    <title>{% block title %}Institut NG-D{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
 
+    <!-- Bootstrap CSS & Other Stylesheets -->
     <link rel="stylesheet" href="{% static 'css/open-iconic-bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/animate.css' %}">
-    
     <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
-
     <link rel="stylesheet" href="{% static 'css/aos.css' %}">
-
     <link rel="stylesheet" href="{% static 'css/ionicons.min.css' %}">
-    
     <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
     <link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-        crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- Bootstrap JS & jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" 
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-  </head>
-  <body>
-	  <div class="bg-top navbar-light">
-    	<div class="container">
-    		<div class="row no-gutters d-flex align-items-center align-items-stretch">
-    			<div class="col-md-4 d-flex align-items-center py-4">
-    				<a class="navbar-brand" href="{% url 'acceuil' %}">NG-D. <span>Institut</span></a>
-    			</div>
-                
-	    		<div class="col-lg-8 d-block">
-		    		<div class="row d-flex">
+</head>
+<body>
+    <div class="bg-top navbar-light">
+        <div class="container">
+            <div class="row no-gutters d-flex align-items-center align-items-stretch">
+                <div class="col-md-4 d-flex align-items-center py-4">
+                    <a class="navbar-brand" href="{% url 'acceuil' %}">NG-D. <span>Institut</span></a>
+                </div>
+                <div class="col-lg-8 d-block">
+                    <div class="row d-flex justify-content-end">
                         {% if user.is_authenticated %}
                         <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
-					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
-					    	<div class="text">
-					    		<span>Nom {{user.role}}</span>
-						    	<span>{% if user.sex == 'Homme'%}Mr. {% elif user.sex == 'Femme' %}Mme. {%else%} {%endif%} {{ user.username }}</span>
-						    </div>
-					    </div>
+                            <div class="icon d-flex justify-content-center align-items-center"><span class="icon-user"></span></div>
+                            <div class="text">
+                                <span>{% if user.sex == 'Homme' %}Mr. {% elif user.sex == 'Femme' %}Mme. {% endif %} {{ user.username }}</span>
+                                <span>{{ user.role }}</span>
+                            </div>
+                        </div>
                         <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
-					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
-					    	<div class="text">
-					    		<span>Email</span>
-						    	<span>{{ user.email }}</span>
-						    </div>
-					    </div>
+                            <div class="icon d-flex justify-content-center align-items-center"><span class="icon-envelope"></span></div>
+                            <div class="text">
+                                <span>{{ user.email }}</span>
+                            </div>
+                        </div>
                         <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
-					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-phone2"></span></div>
-						    <div class="text">
-						    	<span>Telephone</span>
-						    	<span>{{ user.telephone }}</span>
-						    </div>
-					    </div>
+                            <div class="icon d-flex justify-content-center align-items-center"><span class="icon-phone"></span></div>
+                            <div class="text">
+                                <span>{{ user.telephone }}</span>
+                            </div>
+                        </div>
+                      
+                        {% else %}
+                        <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
+                            <div class="icon d-flex justify-content-center align-items-center"><span class="icon-envelope"></span></div>
+                            <div class="text">
+                                <span>Email: NG-Dinstitut@Gmail.com</span>
+                            </div>
+                        </div>
+                        <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
+                            <div class="icon d-flex justify-content-center align-items-center"><span class="icon-phone"></span></div>
+                            <div class="text">
+                                <span>Appelez-nous : +1 514 467 0633</span>
+                            </div>
+                        </div>
                         <div class="col-md topper d-flex align-items-center justify-content-end">
-					    	<p class="mb-0">
-                                <a href="{% url 'deconnexion' %}" class="btn py-2 px-3 btn-primary d-flex align-items-center justify-content-center">
-					    			<span>Déconnexion</span>
-					    		</a>
-					    	</p>
-					    </div>
-                        
-                {% else %}
-					    <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
-					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
-					    	<div class="text">
-					    		<span>Email</span>
-						    	<span>NG-Dinstitut@Gmail.com</span>
-						    </div>
-					    </div>
-					    <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
-					    	<div class="icon d-flex justify-content-center align-items-center"><span class="icon-phone2"></span></div>
-						    <div class="text">
-						    	<span>Appelez</span>
-						    	<span>Appelez-nous : +1 514 467 0633</span>
-						    </div>
-					    </div>
-					    <div class="col-md topper d-flex align-items-center justify-content-end">
-					    	<p class="mb-0">
+                            <p class="mb-0">
                                 <a href="{% url 'inscription' %}" class="btn py-2 px-3 btn-primary d-flex align-items-center justify-content-center">
-					    			<span>Demander une Admission</span>
-					    		</a>
-					    	</p>
-					    </div>
+                                    <span>Demander une Admission</span>
+                                </a>
+                            </p>
+                        </div>
                         {% endif %}
-				    </div>
-			    </div>
-		    </div>
-		  </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-   
-	  <nav class="navbar navbar-expand-lg navbar-dark bg-dark ftco-navbar-light" id="ftco-navbar">
-	    <div class="container d-flex align-items-center px-4">
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Basculer la navigation">
-	        <span class="oi oi-menu"></span> Menu
-	      </button>
-	      <form action="#" class="searchform order-lg-last">
-          <div class="form-group d-flex">
-            <input type="text" class="form-control pl-3" placeholder="Rechercher">
-            <button type="submit" placeholder="" class="form-control search"><span class="ion-ios-search"></span></button>
-          </div>
-        </form>
-	      <div class="collapse navbar-collapse" id="ftco-nav">
-	        <ul class="navbar-nav mr-auto">
-              {% if user.is_authenticated  %}
-              <li class="nav-item">
-                <a href="{% url 'afficher_messages' %}" class="nav-link">
-                    Messages
-                    {% if unread_messages_count > 0 %}
-                        <span class="badge badge-danger"><i class="bi bi-chat-dots"></i>{{ unread_messages_count }}</span>
-                    {% endif %}
-                </a>
-            </li>
-            <li class="nav-item"><a href="{% url 'profil_utilisateur' %}" class="nav-link">Gestion de mon compte</a></li>
-                {% if user.role == 'Admin'  %}
-              <li class="nav-item"><a href="{% url 'list_utilisateurs' %}" class="nav-link">All Users</a></li>  
-              <li class="nav-item"><a href="{% url 'list_admins' %}" class="nav-link">Gestion Admin</a></li>  
-              <li class="nav-item"><a href="{% url 'list_candidats' %}" class="nav-link">Gestion Candidate</a></li>  
-              <li class="nav-item"><a href="{% url 'list_enseignants' %}" class="nav-link">Gestion Enseignant</a></li>  
-              <li class="nav-item"><a href="{% url 'list_etudiants' %}" class="nav-link">Gestion Etudiant</a></li>  
-              <li class="nav-item"><a href="{% url 'list_cours' %}" class="nav-link">Gestion Cours</a></li>  
-              <li class="nav-item"><a href="{% url 'list_sessions' %}" class="nav-link">Gestion Session</a></li>
-              <li class="nav-item"><a href="{% url 'list_domaines' %}" class="nav-link">Gestion Domaine</a></li>
-              <li class="nav-item"><a href="{% url 'list_programmes' %}" class="nav-link">Gestion Programme</a></li>
-              <li class="nav-item"><a href="{% url 'list_salles' %}" class="nav-link">Gestion salles</a></li>
-              <li class="nav-item"><a href="{% url 'list_groupes' %}" class="nav-link">Gestion Groupes</a></li>
-              <li class="nav-item"><a href="{% url 'changer_frais_inscription' %}" class="nav-link">changer frais d'admission</a></li>
 
-              {% elif user.role == 'Enseignant'  %}
-              <li class="nav-item"><a href="{% url 'list_cours' %}" class="nav-link">Liste des cours</a></li>
-              <li class="nav-item"><a href="{% url 'mes_cours_professeur' %}" class="nav-link">Mes cours</a></li>
-
-              {% elif user.role == 'Etudiant'  %}
-              <li class="nav-item"><a href="{% url 'list_cours' %}" class="nav-link">Liste des cours</a></li>
-              <li class="nav-item"><a href="{% url 'mes_cours_etudiant' %}" class="nav-link">Mes cours</a></li>
-              {% else %}
-              <li class="nav-item active"><a href="{% url 'acceuil' %}" class="nav-link pl-0">Accueil</a></li>
-              <li class="nav-item"><a href="{% url 'about' %}" class="nav-link">À propos</a></li>
-              <li class="nav-item"><a href="{% url 'cours' %}" class="nav-link">Cours</a></li>
-              <li class="nav-item"><a href="{% url 'personnel' %}" class="nav-link">Enseignants</a></li>
-              <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
-              <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid px-4">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Basculer la navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-center" id="ftco-nav">
+        <ul class="navbar-nav">
+          {% url 'afficher_messages' as afficher_messages_url %}
+          {% url 'profil_utilisateur' as profil_utilisateur_url %}
+          {% url 'list_utilisateurs' as list_utilisateurs_url %}
+          {% url 'list_admins' as list_admins_url %}
+          {% url 'list_candidats' as list_candidats_url %}
+          {% url 'list_enseignants' as list_enseignants_url %}
+          {% url 'list_etudiants' as list_etudiants_url %}
+          {% url 'list_cours' as list_cours_url %}
+          {% url 'list_sessions' as list_sessions_url %}
+          {% url 'list_domaines' as list_domaines_url %}
+          {% url 'list_programmes' as list_programmes_url %}
+          {% url 'list_salles' as list_salles_url %}
+          {% url 'list_groupes' as list_groupes_url %}
+          {% url 'changer_frais_inscription' as changer_frais_inscription_url %}
+          {% url 'mes_cours_professeur' as mes_cours_professeur_url %}
+          {% url 'mes_cours_etudiant' as mes_cours_etudiant_url %}
+          {% url 'list_horaires' as list_horaires_url %}
+          {% url 'acceuil' as acceuil_url %}
+          {% url 'about' as about_url %}
+          {% url 'connexion' as connexion_url %}
+          {% url 'deconnexion' as deconnexion_url %}
+  
+          {% if user.is_authenticated %}
+          <li class="nav-item me-3 {% if request.path == afficher_messages_url %}active{% endif %}">
+            <a href="{{ afficher_messages_url }}" class="nav-link">
+              <i class="bi bi-chat-dots-fill"></i> Messages
+              {% if unread_messages_count > 0 %}
+              <span class="badge bg-danger">{{ unread_messages_count }}</span>
               {% endif %}
-              <li class="nav-item"><a href="{% url 'list_horaires' %}" class="nav-link">Horaires</a></li>
-
-              {% else %}
-
-            <li class="nav-item active"><a href="{% url 'acceuil' %}" class="nav-link pl-0">Accueil</a></li>
-	        	<li class="nav-item"><a href="{% url 'about' %}" class="nav-link">À propos</a></li>
-	        	<li class="nav-item"><a href="{% url 'cours' %}" class="nav-link">Cours</a></li>
-	        	<li class="nav-item"><a href="{% url 'personnel' %}" class="nav-link">Enseignants</a></li>
-	        	<li class="nav-item"><a href="{% url 'blog' %}" class="nav-link">Blog</a></li>
-	          <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
-              <li class="nav-item"><a href="{% url 'connexion' %}" class="nav-link">connexion</a></li>  
-              {% endif %}
-	        </ul>
-	      </div>
-	    </div>
-	  </nav>
-    <!-- FIN nav -->
+            </a>
+          </li>
+          <li class="nav-item me-3 {% if request.path == profil_utilisateur_url %}active{% endif %}">
+            <a href="{{ profil_utilisateur_url }}" class="nav-link"><i class="bi bi-person-circle"></i> Mon Profil</a>
+          </li>
+          {% if user.role == 'Admin' %}
+          <li class="nav-item dropdown me-3 
+              {% if request.path == list_utilisateurs_url or request.path == list_admins_url or request.path == list_candidats_url or request.path == list_enseignants_url or request.path == list_etudiants_url or request.path == list_cours_url or request.path == list_sessions_url or request.path == list_domaines_url or request.path == list_programmes_url or request.path == list_salles_url or request.path == list_groupes_url or request.path == changer_frais_inscription_url %}active{% endif %}">
+            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-gear-fill"></i> Gérer
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+              <li><a class="dropdown-item" href="{{ list_utilisateurs_url }}"><i class="bi bi-people-fill"></i> Utilisateurs</a></li>
+              <li><a class="dropdown-item" href="{{ list_admins_url }}"><i class="bi bi-person-workspace"></i> Administrateurs</a></li>
+              <li><a class="dropdown-item" href="{{ list_candidats_url }}"><i class="bi bi-person-plus-fill"></i> Candidats</a></li>
+              <li><a class="dropdown-item" href="{{ list_enseignants_url }}"><i class="bi bi-mortarboard-fill"></i> Enseignants</a></li>
+              <li><a class="dropdown-item" href="{{ list_etudiants_url }}"><i class="bi bi-book-fill"></i> Étudiants</a></li>
+              <li><a class="dropdown-item" href="{{ list_cours_url }}"><i class="bi bi-journal-bookmark-fill"></i> Cours</a></li>
+              <li><a class="dropdown-item" href="{{ list_sessions_url }}"><i class="bi bi-calendar3-event-fill"></i> Sessions</a></li>
+              <li><a class="dropdown-item" href="{{ list_domaines_url }}"><i class="bi bi-grid-fill"></i> Domaines</a></li>
+              <li><a class="dropdown-item" href="{{ list_programmes_url }}"><i class="bi bi-bookmarks-fill"></i> Programmes</a></li>
+              <li><a class="dropdown-item" href="{{ list_salles_url }}"><i class="bi bi-door-open-fill"></i> Salles</a></li>
+              <li><a class="dropdown-item" href="{{ list_groupes_url }}"><i class="bi bi-people-fill"></i> Groupes</a></li>
+              <li><a class="dropdown-item" href="{{ changer_frais_inscription_url }}"><i class="bi bi-cash-stack"></i> Frais d'Inscription</a></li>
+            </ul>
+          </li>
+          {% elif user.role == 'Enseignant' %}
+          <li class="nav-item me-3 {% if request.path == list_cours_url %}active{% endif %}">
+            <a href="{{ list_cours_url }}" class="nav-link"><i class="bi bi-journal-check"></i> Liste des Cours</a>
+          </li>
+          <li class="nav-item me-3 {% if request.path == mes_cours_professeur_url %}active{% endif %}">
+            <a href="{{ mes_cours_professeur_url }}" class="nav-link"><i class="bi bi-folder2-open"></i> Mes Cours</a>
+          </li>
+          {% elif user.role == 'Etudiant' %}
+          <li class="nav-item me-3 {% if request.path == list_cours_url %}active{% endif %}">
+            <a href="{{ list_cours_url }}" class="nav-link"><i class="bi bi-book-half"></i> Liste des Cours</a>
+          </li>
+          <li class="nav-item me-3 {% if request.path == mes_cours_etudiant_url %}active{% endif %}">
+            <a href="{{ mes_cours_etudiant_url }}" class="nav-link"><i class="bi bi-bookmark-check"></i> Mes Cours</a>
+          </li>
+          {% endif %}
+          <li class="nav-item me-3 {% if request.path == list_horaires_url %}active{% endif %}">
+            <a href="{{ list_horaires_url }}" class="nav-link"><i class="bi bi-clock-fill"></i> Horaires</a>
+          </li>
+          {% else %}
+          <li class="nav-item me-3 {% if request.path == acceuil_url %}active{% endif %}">
+            <a href="{{ acceuil_url }}" class="nav-link"><i class="bi bi-house-door"></i> Accueil</a>
+          </li>
+          <li class="nav-item me-3 {% if request.path == about_url %}active{% endif %}">
+            <a href="{{ about_url }}" class="nav-link"><i class="bi bi-info-circle"></i> À propos</a>
+          </li>
+         
+        </ul>
+      </div>
+      <div class="d-flex">
+        <a href="{{ connexion_url }}" class="btn btn-outline-light {% if request.path == connexion_url %}active{% endif %}"><i class="bi bi-box-arrow-in-right"></i> Connexion</a>
+        {% endif %}
+       
+      </div>
+      {% if user.is_authenticated %}
+      <a href="{{ deconnexion_url }}" class="btn btn-outline-light {% if request.path == connexion_url %}active{% endif %}"><i class="bi bi-box-arrow-in-right"></i> Déconnexion</a>
+      {% endif %}
+      
+    </div>
+  </nav>
+  <!-- FIN nav -->
+      
     {% block content %}{% endblock %}
 		
     <footer class="ftco-footer ftco-bg-dark ftco-section">
       <div class="container">
-        <div class="row mb-5">
-          <div class="col-md-6 col-lg-3">
-            <div class="ftco-footer-widget mb-5">
-            	<h2 class="ftco-heading-2">Vous avez des questions ?</h2>
-            	<div class="block-23 mb-3">
-	              <ul>
-	                <li><span class="icon icon-map-marker"></span><span class="text">203 Rue Fictive, Mountain View, San Francisco, Californie, USA</span></li>
-	                <li><a href="#"><span class="icon icon-phone"></span><span class="text">+1 514 467 0633</span></a></li>
-	                <li><a href="#"><span class="icon icon-envelope"></span><span class="text">NG-Dinstitut@Gmail.com</span></a></li>
-	              </ul>
-	            </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-            <div class="ftco-footer-widget mb-5">
-              <h2 class="ftco-heading-2">Blog récent</h2>
-              <div class="block-21 mb-4 d-flex">
-                <a class="blog-img mr-4" style="background-image: url({% static 'images/image_1.jpg' %});"></a>
-                <div class="text">
-                  <h3 class="heading"><a href="#">Même le tout-puissant Pointing n'a aucun contrôle sur les textes aveugles</a></h3>
-                  <div class="meta">
-                    <div><a href="#"><span class="icon-calendar"></span> 27 Juin 2019</a></div>
-                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                  </div>
-                </div>
-              </div>
-              <div class="block-21 mb-5 d-flex">
-                <a class="blog-img mr-4" style="background-image: url({% static 'images/image_2.jpg' %});"></a>
-                <div class="text">
-                  <h3 class="heading"><a href="#">Même le tout-puissant Pointing n'a aucun contrôle sur les textes aveugles</a></h3>
-                  <div class="meta">
-                    <div><a href="#"><span class="icon-calendar"></span> 27 Juin 2019</a></div>
-                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-            <div class="ftco-footer-widget mb-5 ml-md-4">
-              <h2 class="ftco-heading-2">Liens</h2>
-              <ul class="list-unstyled">
-                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>Accueil</a></li>
-                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>À propos</a></li>
-                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>Services</a></li>
-                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>Départements</a></li>
-                <li><a href="#"><span class="ion-ios-arrow-round-forward mr-2"></span>Contact</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-            <div class="ftco-footer-widget mb-5">
-            	<h2 class="ftco-heading-2">Abonnez-vous !</h2>
-              <form action="#" class="subscribe-form">
-                <div class="form-group">
-                  <input type="text" class="form-control mb-2 text-center" placeholder="Entrez votre adresse email">
-                  <input type="submit" value="Abonnez-vous" class="form-control submit px-3">
-                </div>
-              </form>
-            </div>
-            <div class="ftco-footer-widget mb-5">
-            	<h2 class="ftco-heading-2 mb-0">Connectez-vous avec nous</h2>
-            	<ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-3">
-                <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
-                <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
-                <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
         <div class="row">
           <div class="col-md-12 text-center">
-
+            <div class="ftco-footer-widget mb-5">
+              <h2 class="ftco-heading-2">Vous avez des questions ?</h2>
+              <div class="block-23 mb-3">
+                <ul>
+                  <li><span class="icon icon-map-marker"></span><span class="text">203 Rue Fictive, Mountain View, San Francisco, Californie, USA</span></li>
+                  <li><a href="#"><span class="icon icon-phone"></span><span class="text">+1 514 467 0633</span></a></li>
+                  <li><a href="#"><span class="icon icon-envelope"></span><span class="text">NG-Dinstitut@Gmail.com</span></a></li>
+                </ul>
+              </div>
+            </div>
             <p><!-- Le lien vers Colorlib ne peut pas être supprimé. Le modèle est sous licence CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> Tous droits réservés | Daryl_237 <i class="icon-heart" aria-hidden="true"></i>
-  <!-- Le lien vers Colorlib ne peut pas être supprimé. Le modèle est sous licence CC BY 3.0. --></p>
+              Copyright &copy;<script>document.write(new Date().getFullYear());</script> Tous droits réservés | Daryl_237 
+              <i class="icon-heart" aria-hidden="true"></i>
+              <!-- Le lien vers Colorlib ne peut pas être supprimé. Le modèle est sous licence CC BY 3.0. -->
+            </p>
           </div>
         </div>
       </div>
     </footer>
-    
-  
 
-  <!-- loader -->
-  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen">
+      <svg class="circular" width="48px" height="48px">
+        <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" />
+        <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00" />
+      </svg>
+    </div>
 
-
-  <script src="{% static 'js/jquery.min.js' %}"></script>
-  <script src="{% static 'js/jquery-migrate-3.0.1.min.js' %}"></script>
-  <script src="{% static 'js/popper.min.js' %}"></script>
-  <script src="{% static 'js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'js/jquery.easing.1.3.js' %}"></script>
-  <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
-  <script src="{% static 'js/jquery.stellar.min.js' %}"></script>
-  <script src="{% static 'js/owl.carousel.min.js' %}"></script>
-  <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
-  <script src="{% static 'js/aos.js' %}"></script>
-  <script src="{% static 'js/jquery.animateNumber.min.js' %}"></script>
-  <script src="{% static 'js/scrollax.min.js' %}"></script>
-  <script src="{% static 'js/google-map.js' %}"></script>
-  <script src="{% static 'js/main.js' %}"></script>
-    
-  </body>
+    <!-- JavaScript -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jquery-migrate-3.0.1.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.easing.1.3.js' %}"></script>
+    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'js/jquery.stellar.min.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/jquery.animateNumber.min.js' %}"></script>
+    <script src="{% static 'js/scrollax.min.js' %}"></script>
+    <script src="{% static 'js/google-map.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
 </html>

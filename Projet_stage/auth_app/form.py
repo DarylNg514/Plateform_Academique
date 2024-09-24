@@ -295,13 +295,12 @@ class CandidatForm(UserCreationForm):
     )
     session = forms.ModelChoiceField(queryset=Session.objects.all(), required=False)
     domaine = forms.ModelChoiceField(queryset=Domaine.objects.none(), required=False)
-    diplome = forms.FileField(required=False, label="Diplôme")
-    passport = forms.FileField(required=False, label="Passeport")
-
+    diplome = forms.FileField(required=False, label="Diplôme (merci de fournir votre diplôme le plus élevé)")
+    passport = forms.FileField(required=False, label="Passport")
 
     class Meta:
         model = Utilisateur
-        fields = ['username','image', 'prenom', 'nom', 'email', 'telephone', 'date_de_naissance', 'adresse', 'code_postal', 'sex', 'programme', 'session','domaine','diplome','passport']
+        fields = ['username','image', 'prenom', 'nom', 'email', 'telephone', 'date_de_naissance', 'adresse', 'code_postal', 'sex', 'session', 'programme','domaine','diplome','passport']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

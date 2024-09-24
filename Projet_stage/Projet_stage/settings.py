@@ -98,6 +98,8 @@ DATABASES = {
     'NAME': 'Projet_stage',
     'USER': 'root', 
     'PASSWORD':'',
+    #'HOST': 'host.docker.internal',  # Adresse permettant d'accéder à l'hôte depuis le conteneur Docker
+
     'HOST': '127.0.0.1', 
     'PORT': '3306',
     }

@@ -1,6 +1,6 @@
 {% extends 'index.html' %}
 {% load static %}
-{% block title %}{% if role %} {{ role }}s {%else%}Tous les Utilisateurs{%endif%}{% endblock %}
+{% block title %}{% if role %} {{ role }}s {% else %}Tous les Utilisateurs{% endif %}{% endblock %}
 {% block content %}
 
 <section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
@@ -8,10 +8,10 @@
     <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
             <div class="col-md-9 ftco-animate text-center">
-                <h1 class="mb-2 bread">{% if role %} {{ role }}s {%else%}Tous les Utilisateurs{%endif%}</h1>
+                <h1 class="mb-2 bread">{% if role %} {{ role }}s {% else %}Tous les Utilisateurs{% endif %}</h1>
                 <p class="breadcrumbs">
                     <span class="mr-2"><a href="{% url 'acceuil' %}">Home <i class="ion-ios-arrow-forward"></i></a></span>
-                    <span>{% if role %} {{ role }}s {%else%}Tous les Utilisateurs{%endif%} <i class="ion-ios-arrow-forward"></i></span>
+                    <span>{% if role %} {{ role }}s {% else %}Tous les Utilisateurs{% endif %} <i class="ion-ios-arrow-forward"></i></span>
                 </p>
             </div>
         </div>
@@ -26,150 +26,161 @@
                 <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
         </ul>
-    {% endif %}
+        {% endif %}
         <div class="row">
-           
             {% for utilisateur in utilisateurs %}
             {% if not role or utilisateur.role != 'Candidat' or utilisateur.status != False %}
-            <div class="col-md-3 course ftco-animate">
-                {% if utilisateur.image %}
-                <div class="img" style="background-image: url('{{ utilisateur.image.url }}');"></div>
-                {% else %}
-                <div class="img" style="background-image: url('{% static 'images/default-profile.png' %}');"></div> <!-- Image par défaut si l'utilisateur n'a pas d'image -->
-                {% endif %}
-                <div class="text pt-4">
-                    <h3>{{ utilisateur.username }}</h3>
-                    <p><strong>Email :</strong> {{ utilisateur.email }}</p>
-                    <p><strong>Nom :</strong> {{ utilisateur.nom }}</p>
-                    <p><strong>Prénom :</strong> {{ utilisateur.prenom }}</p>
-                    <p><strong>Téléphone :</strong> {{ utilisateur.telephone }}</p>
-                    <p><strong>Date de naissance :</strong> {{ utilisateur.date_de_naissance }}</p>
-                    <p><strong>Adresse :</strong> {{ utilisateur.adresse }}</p>
-                    <p><strong>Code postal :</strong> {{ utilisateur.code_postal }}</p>
-                    <p><strong>Sexe :</strong> {{ utilisateur.get_sex_display }}</p>
-                    <p><strong>Rôle :</strong> {{ utilisateur.get_role_display }}</p>
-                    {%if utilisateur.role != 'Admin'%}  
-                    <p><strong>Programme :</strong> 
-                        {% if utilisateur.programme.exists %}
-                            {% for prog in utilisateur.programme.all %}
-                                {{ prog.code_programme }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            Non assigné
-                        {% endif %}
-                    </p>
-                    {%if utilisateur.role != 'Enseignant'%}
-                    <p><strong>Session :</strong> 
-                        {% if utilisateur.session %}
-                            {{ utilisateur.session.code_session }}
-                        {% else %}
-                            Non assigné
-                        {% endif %}
-                    </p>
-                    {% endif %}
-                    <p><strong>Domaine :</strong> 
-                        {% if utilisateur.domaine.exists %}
-                            {% for prog in utilisateur.domaine.all %}
-                                {{ prog.code_programme }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        {% else %}
-                            Non assigné
-                        {% endif %}
-                    </p>
-                    {% endif %}
-                    {%if utilisateur.role == 'Candidat'%}  
-                    <p><strong>payment effectué :</strong> {% if utilisateur.frais_paye == False %} Non {% else %} Oui {% endif %}</p>
-                    <p><strong>Diplôme :</strong> 
-                        {% if utilisateur.diplome %}
-                        {% if ".pdf" in utilisateur.diplome.url %}
-                                <i class="fas fa-file-pdf"></i>
-                                <a href="{{ utilisateur.diplome.url }}" target="_blank">Télécharger le fichier PDF <i class="fas fa-download"></i></a>
-                        {% elif ".doc" in utilisateur.diplome.url or ".docx" in utilisateur.diplome.url %}
-                        <i class="fas fa-file-word"></i>
-                        <a href="{{ utilisateur.diplome.url }}" target="_blank">Télécharger le fichier Word <i class="fas fa-download"></i></a>
-                        {% elif ".jpg" in utilisateur.diplome.url or ".jpeg" in utilisateur.diplome.url or ".png" in utilisateur.diplome.url %}
-                            <img src="{{ utilisateur.diplome.url }}" alt="Diplôme" width="200">
-                        {% else %}
-                            <a href="{{ utilisateur.diplome.url }}" target="_blank">Télécharger le fichier <i class="fas fa-download"></i></a>
-                        {% endif %}
-                    {% else %}
-                        Non assigné
-                    {% endif %}
-                    </p>
-
-                    <p><strong>Passeport :</strong> 
-                        {% if utilisateur.passport %}
-                    {% if ".pdf" in utilisateur.passport.url %}
-                       <i class="fas fa-file-pdf"></i>     
-                        <a href="{{ utilisateur.passport.url }}" target="_blank">Télécharger le fichier PDF <i class="fas fa-download"></i></a>
-                        {% elif ".doc" in utilisateur.passport.url or ".docx" in utilisateur.passport.url %}
-                        <i class="fas fa-file-word"></i>
-                        <a href="{{ utilisateur.passport.url }}" target="_blank">Télécharger le fichier Word <i class="fas fa-download"></i></a>
-                        {% elif ".jpg" in utilisateur.passport.url or ".jpeg" in utilisateur.passport.url or ".png" in utilisateur.passport.url %}
-                            <img src="{{ utilisateur.passport.url }}" alt="Passeport" width="200">
-                        {% else %}
-                        <a href="{{ utilisateur.passport.url }}" target="_blank">Télécharger le fichier <i class="fas fa-download"></i></a>
-                        {% endif %}
-                    {% else %}
-                         Non assigné
-                    {% endif %}
-                    </p>
-
-                   
-                    <p><strong>Status de la demande d'admission:</strong>
-                        {% if utilisateur.status is None %}
-                            <span class="badge badge-warning">En attente</span>
-                        {% elif utilisateur.status %}
-                            <span class="badge badge-success">Accepté</span>
-                        {% else %}
-                            <span class="badge badge-danger">Refusé</span>
-                        {% endif %}
-                    {%endif%}         
-                    {% if role %}      
-                    <div class="d-flex ">
-                        {%if role == 'Candidat'%}
-                        <a href="{% url 'accepter_candidat' utilisateur.id %}" class="btn btn-success me-2">
-                            <i class="bi bi-check-lg"></i> 
-                        </a>
-                        <a href="#" class="btn btn-primary me-2" onclick="showCommentField({{ utilisateur.id }})">
-                            <i class="bi bi-x-lg"></i> 
-                        </a>
-                        <form method="post" action="{% url 'refuser_candidat' utilisateur.id %}" id="rejectForm-{{ utilisateur.id }}" style="display: none;">
-                            {% csrf_token %}
-                            <textarea name="comment" class="form-control" placeholder="Motif du rejet" required></textarea>
-                            <button type="submit" class="btn btn-danger mt-2">Envoyer</button>
-                        </form>
-                        {%else%}
-                        <a href="{% url 'update_utilisateur' utilisateur.id %}" class="btn btn-primary me-2">
-                            <i class="bi bi-pencil-square"></i> 
-                        </a>
-                        {%endif%}
-                        <form method="post" action="{% url 'delete_utilisateur' utilisateur.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash"></i> 
-                            </button>
-                        </form>
+            <div class="col-md-3 d-flex align-items-stretch">
+                <div class="card shadow-sm mb-4 w-100">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title">{{ utilisateur.username }}</h4>
                     </div>
-                    {%endif%}
+                    <div class="card-body d-flex flex-column">
+                        {% if utilisateur.image %}
+                        <img src="{{ utilisateur.image.url }}" class="card-img-top rounded-circle mx-auto mb-3" alt="{{ utilisateur.username }}" style="width: 150px; height: 150px;">
+                        {% else %}
+                        <img src="{% static 'images/default-profile.png' %}" class="card-img-top rounded-circle mx-auto mb-3" alt="Profile Default" style="width: 150px; height: 150px;">
+                        {% endif %}
+                        <p><strong>Email :</strong> {{ utilisateur.email }}</p>
+                        <p><strong>Nom :</strong> {{ utilisateur.nom }}</p>
+                        <p><strong>Prénom :</strong> {{ utilisateur.prenom }}</p>
+                        <p><strong>Téléphone :</strong> {{ utilisateur.telephone }}</p>
+                        <p><strong>Date de naissance :</strong> {{ utilisateur.date_de_naissance }}</p>
+                        <p><strong>Adresse :</strong> {{ utilisateur.adresse }}</p>
+                        <p><strong>Code postal :</strong> {{ utilisateur.code_postal }}</p>
+                        <p><strong>Sexe :</strong> {{ utilisateur.get_sex_display }}</p>
+                        <p><strong>Rôle :</strong> {{ utilisateur.get_role_display }}</p>
+
+                        {% if utilisateur.role != 'Admin' %}
+                        <p><strong>Programme :</strong>
+                            {% if utilisateur.programme.exists %}
+                                {% for prog in utilisateur.programme.all %}
+                                    {{ prog.code_programme }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                Non assigné
+                            {% endif %}
+                        </p>
+
+                        {% if utilisateur.role != 'Enseignant' %}
+                        <p><strong>Session :</strong> 
+                            {% if utilisateur.session %}
+                                {{ utilisateur.session.code_session }}
+                            {% else %}
+                                Non assigné
+                            {% endif %}
+                        </p>
+                        {% endif %}
+
+                        <p><strong>Domaine :</strong> 
+                            {% if utilisateur.domaine.exists %}
+                                {% for prog in utilisateur.domaine.all %}
+                                    {{ prog.code_programme }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                Non assigné
+                            {% endif %}
+                        </p>
+                        {% endif %}
+
+                        {% if utilisateur.role == 'Candidat' %}  
+                        <p><strong>Payment effectué :</strong> {% if utilisateur.frais_paye == False %} Non {% else %} Oui {% endif %}</p>
+                        <p><strong>Diplôme :</strong>
+                            {% if utilisateur.diplome %}
+                                {% if ".pdf" in utilisateur.diplome.url %}
+                                    <i class="fas fa-file-pdf"></i>
+                                    <a href="{{ utilisateur.diplome.url }}" target="_blank">Télécharger le fichier PDF <i class="fas fa-download"></i></a>
+                                {% elif ".doc" in utilisateur.diplome.url or ".docx" in utilisateur.diplome.url %}
+                                    <i class="fas fa-file-word"></i>
+                                    <a href="{{ utilisateur.diplome.url }}" target="_blank">Télécharger le fichier Word <i class="fas fa-download"></i></a>
+                                {% elif ".jpg" in utilisateur.diplome.url or ".jpeg" in utilisateur.diplome.url or ".png" in utilisateur.diplome.url %}
+                                    <img src="{{ utilisateur.diplome.url }}" alt="Diplôme" width="200">
+                                {% else %}
+                                    <a href="{{ utilisateur.diplome.url }}" target="_blank">Télécharger le fichier <i class="fas fa-download"></i></a>
+                                {% endif %}
+                            {% else %}
+                                Non assigné
+                            {% endif %}
+                        </p>
+
+                        <p><strong>Passeport :</strong> 
+                            {% if utilisateur.passport %}
+                                {% if ".pdf" in utilisateur.passport.url %}
+                                   <i class="fas fa-file-pdf"></i>     
+                                    <a href="{{ utilisateur.passport.url }}" target="_blank">Télécharger le fichier PDF <i class="fas fa-download"></i></a>
+                                {% elif ".doc" in utilisateur.passport.url or ".docx" in utilisateur.passport.url %}
+                                    <i class="fas fa-file-word"></i>
+                                    <a href="{{ utilisateur.passport.url }}" target="_blank">Télécharger le fichier Word <i class="fas fa-download"></i></a>
+                                {% elif ".jpg" in utilisateur.passport.url or ".jpeg" in utilisateur.passport.url or ".png" in utilisateur.passport.url %}
+                                    <img src="{{ utilisateur.passport.url }}" alt="Passeport" width="200">
+                                {% else %}
+                                    <a href="{{ utilisateur.passport.url }}" target="_blank">Télécharger le fichier <i class="fas fa-download"></i></a>
+                                {% endif %}
+                            {% else %}
+                                 Non assigné
+                            {% endif %}
+                        </p>
+
+                        <p><strong>Status de la demande d'admission:</strong>
+                            {% if utilisateur.status is None %}
+                                <span class="badge badge-warning">En attente</span>
+                            {% elif utilisateur.status %}
+                                <span class="badge badge-success">Accepté</span>
+                            {% else %}
+                                <span class="badge badge-danger">Refusé</span>
+                            {% endif %}
+                        </p>
+                        {% endif %}
+
+                        {% if role %}
+                        <div class="d-flex justify-content-around mt-auto">
+                            {% if role == 'Candidat' %}
+                            <a href="{% url 'accepter_candidat' utilisateur.id %}" class="btn btn-success me-2">
+                                <i class="bi bi-check-lg"></i> 
+                            </a>
+                            <a href="#" class="btn btn-primary me-2" onclick="showCommentField({{ utilisateur.id }})">
+                                <i class="bi bi-x-lg"></i> 
+                            </a>
+                            <form method="post" action="{% url 'refuser_candidat' utilisateur.id %}" id="rejectForm-{{ utilisateur.id }}" style="display: none;">
+                                {% csrf_token %}
+                                <textarea name="comment" class="form-control" placeholder="Motif du rejet" required></textarea>
+                                <button type="submit" class="btn btn-danger mt-2">Envoyer</button>
+                            </form>
+                            {% else %}
+                            <a href="{% url 'update_utilisateur' utilisateur.id %}" class="btn btn-primary me-2">
+                                <i class="bi bi-pencil-square"></i> 
+                            </a>
+                            {% endif %}
+                            <form method="post" action="{% url 'delete_utilisateur' utilisateur.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> 
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% endif %}
             {% endfor %}
         </div>
-        {% if role %}
-        {%if role != 'Candidat'%}
+
+        <!-- Ajouter un utilisateur (si applicable) -->
+        {% if role and role != 'Candidat' %}
         <div class="row mt-4">
             <div class="col text-center">
                 <a href="{% url 'create_utilisateur' role=role %}" class="btn btn-secondary btn-lg">
-                    <i class="bi bi-plus-lg"></i> 
+                    <i class="bi bi-plus-lg"></i> Ajouter un {{ role }}
                 </a>
             </div>
         </div>
-        {%endif%}
-        {%endif%}
+        {% endif %}
     </div>
-    <script>
+</section>
+
+<script>
+
         function showCommentField(userId) {
           const form = document.getElementById('rejectForm-' + userId);
           form.style.display = 'block';  // Affiche le champ de commentaire

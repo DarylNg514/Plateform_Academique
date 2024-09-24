@@ -1,6 +1,13 @@
 # Utiliser une image de base Python
 FROM python:3.11-slim
 
+# Installer les dépendances système nécessaires pour mysqlclient
+RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config \
+    && apt-get clean
+
 # Mettre à jour pip
 RUN pip install --upgrade pip
 
