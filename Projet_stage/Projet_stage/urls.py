@@ -127,8 +127,12 @@ urlpatterns = [
     path('horaire/modifier/<int:id>/', vsc.update_horaire, name='update_horaire'),
     path('horaire/supprimer/<int:id>/', vsc.delete_horaire, name='delete_horaire'),
 
+    path('recherche/', vsc.search_cours, name='search_cours'),
+
     path('cours/rechercher/', vsc.rechercher_cours, name='rechercher_cours'),
     path('cours/notes/', vsc.consulter_notes, name='consulter_notes'),
+
+    path('chatbot/', vsc.chatbot_view, name='chatbot'),
 
 
 ]

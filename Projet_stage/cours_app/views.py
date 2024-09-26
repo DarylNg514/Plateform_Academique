@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls import reverse
+from django.db.models import Q
 import random  
 from django.http import FileResponse
 from collections import defaultdict
@@ -180,20 +181,31 @@ def mes_cours_etudiant(request):
     if etudiant.role != 'Etudiant':
         return redirect('acceuil')  # Rediriger si l'utilisateur n'est pas un étudiant
 
-    # Récupérer le groupe de l'étudiant
-    groupe = etudiant.inscriptions.first().groupe if etudiant.inscriptions.exists() else None
-    
-    # Liste des cours auxquels l'étudiant est inscrit dans son groupe et qui ne sont pas abandonnés
-    if groupe:
-        cours_liste = Cours.objects.filter(
-            inscriptions__etudiant=etudiant, 
-            inscriptions__groupe=groupe, 
-            inscriptions__abandonne=False
-        ).distinct()
-    else:
-        cours_liste = Cours.objects.none()  # Aucun cours si l'étudiant n'a pas de groupe associé
+    # Récupérer les groupes de l'étudiant
+    inscriptions = etudiant.inscriptions.filter(abandonne=False)
 
-    return render(request, 'mes_cours_etudiant.html', {'cours_liste': cours_liste})
+    # Initialiser une liste pour les cours et les professeurs associés
+    cours_professeurs = []
+
+    # Parcourir les inscriptions pour chaque cours et récupérer le professeur du groupe
+    for inscription in inscriptions:
+        cours = inscription.cours
+        groupe = inscription.groupe
+        
+        # Récupérer le professeur associé au groupe et au cours via la relation Attribution
+        attribution = Attribution.objects.filter(cours=cours, groupe=groupe).first()
+        professeur = attribution.professeur if attribution else None
+        
+        # Ajouter à la liste des cours et professeurs
+        cours_professeurs.append({
+            'cours': cours,
+            'professeur': professeur,
+            'groupe': groupe
+        })
+
+    # Passer la liste des cours avec les professeurs associés au template
+    return render(request, 'mes_cours_etudiant.html', {'cours_professeurs': cours_professeurs})
+
 
 # Annulation/Abandon de cours
 def abandonner_cours(request, cours_id):
@@ -307,7 +319,7 @@ def liste_evaluations(request, cours_id):
 def create_evaluation(request, cours_id):
     cours = get_object_or_404(Cours, id=cours_id)
     if request.method == 'POST':
-        form = EvaluationForm(request.POST)
+        form = EvaluationForm(request.POST, request.FILES)
         if form.is_valid():
             evaluation = form.save(commit=False)
             evaluation.cours = cours
@@ -322,7 +334,7 @@ def create_evaluation(request, cours_id):
 def update_evaluation(request, evaluation_id):
     evaluation = get_object_or_404(Evaluation, id=evaluation_id)
     if request.method == 'POST':
-        form = EvaluationForm(request.POST, instance=evaluation)
+        form = EvaluationForm(request.POST , request.FILES, instance=evaluation)
         if form.is_valid():
             form.save()
             messages.success(request, 'Évaluation mise à jour avec succès.')
@@ -556,14 +568,6 @@ def consulter_notes(request):
     notes = Note.objects.filter(etudiant=request.user)
     return render(request, 'consulter_notes.html', {'notes': notes})
 
-# Consulter l'horaire et la salle d'un cours
-def rechercher_cours(request):
-    query = request.GET.get('q', '')
-    if query:
-        cours = Cours.objects.filter(titre__icontains=query)
-    else:
-        cours = []
-    return render(request, 'rechercher_cours.html', {'cours': cours, 'query': query})
 
 # Créer un nouvel horaire
 def create_horaire(request):
@@ -580,35 +584,49 @@ def create_horaire(request):
         form = HoraireForm()
     return render(request, 'create_horaire.html', {'form': form})
 
+
 def list_horaires(request):
     utilisateur = request.user 
     horaires = Horaire.objects.all() 
+    
+    # Créer un dictionnaire pour le nombre d'étudiants par groupe
+    nb_etudiants_par_groupe = {}
+    
     if utilisateur.role == 'Enseignant':
-        horaires = Horaire.objects.filter(professeur=utilisateur).distinct()
+        horaires = Horaire.objects.filter(groupe__attributions__professeur=utilisateur).distinct()
+        groupes = Groupe.objects.filter(attributions__professeur=utilisateur).distinct()
+        nb_etudiants_par_groupe = {groupe.id: Inscription.objects.filter(groupe=groupe, abandonne=False).count() for groupe in groupes}
     elif utilisateur.role == 'Etudiant':
-        horaires = Horaire.objects.filter(cours__inscriptions__etudiant=utilisateur, cours__inscriptions__abandonne=False).distinct()
+        horaires = Horaire.objects.filter(groupe__inscriptions__etudiant=utilisateur, groupe__inscriptions__abandonne=False).distinct()
+    else:
+        horaires = Horaire.objects.all()
+
     # Organiser les horaires par jour de la semaine
     horaires_par_jour = defaultdict(list)
     for horaire in horaires:
+        cours = Attribution.objects.filter(groupe=horaire.groupe).first().cours if Attribution.objects.filter(groupe=horaire.groupe).exists() else None
+        horaire.cours = cours
         horaires_par_jour[horaire.jour].append(horaire)
+    
     # Trier les jours dans l'ordre de la semaine
     jours_ordre = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
     horaires_tries = {jour: horaires_par_jour[jour] for jour in jours_ordre if jour in horaires_par_jour}
+
     return render(request, 'list_horaires.html', {
         'horaires': horaires_tries,
-        'utilisateur': utilisateur  
+        'utilisateur': utilisateur,
+        'nb_etudiants_par_groupe': nb_etudiants_par_groupe,  # Ajouter le dictionnaire au contexte
     })
         
 def voir_mes_horaires(request):
     utilisateur = request.user
 
     if utilisateur.role == 'Etudiant':
-        # Récupérer les cours de l'étudiant
-        inscriptions = utilisateur.inscriptions.filter(abandonne=False)
-        horaires = Horaire.objects.filter(cours__in=inscriptions.values_list('cours', flat=True))
+        # Récupérer les horaires liés aux groupes de l'étudiant
+        horaires = Horaire.objects.filter(groupe__inscriptions__etudiant=utilisateur, groupe__inscriptions__abandonne=False).distinct()
     elif utilisateur.role == 'Enseignant':
-        # Récupérer les cours enseignés par l'enseignant
-        horaires = Horaire.objects.filter(cours__professeur=utilisateur)
+        # Récupérer les horaires liés aux groupes enseignés par l'enseignant
+        horaires = Horaire.objects.filter(groupe__attributions__professeur=utilisateur).distinct()
     else:
         horaires = []
 
@@ -638,3 +656,49 @@ def delete_horaire(request, id):
         messages.success(request, "Horaire supprimé avec succès.")
         return redirect('list_horaires')
     return render(request, 'delete_horaire.html', {'horaire': horaire})
+
+def search_cours(request):
+    query = request.GET.get('q', '')
+    resultats = Cours.objects.none()
+
+    if query:
+        # Recherche des cours par titre ou sigle
+        resultats = Cours.objects.filter(
+            Q(titre__icontains=query) | 
+            Q(sigle__icontains=query)
+        ).distinct()
+
+    # Ajouter les horaires à chaque cours trouvé
+    for cours in resultats:
+        groupes = Attribution.objects.filter(cours=cours).values_list('groupe', flat=True)
+        horaires = Horaire.objects.filter(groupe__in=groupes).select_related('salle')
+        
+        # Ajouter les horaires au cours sous forme de liste d'objets
+        cours.horaires = list(horaires.values(
+            'jour', 'heure_debut', 'heure_fin', 'salle__nom', 'salle__batiment', 'salle__capacite'
+        ))
+
+    # Pagination
+    paginator = Paginator(resultats, 10)  # 10 résultats par page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Transmettre la requête actuelle et les résultats à la vue
+    context = {
+        'query': query,
+        'page_obj': page_obj,
+    }
+    return render(request, 'search_results.html', context)
+
+# Consulter l'horaire et la salle d'un cours
+def rechercher_cours(request):
+    query = request.GET.get('q', '')
+    if query:
+        cours = Cours.objects.filter(titre__icontains=query)
+    else:
+        cours = []
+    return render(request, 'rechercher_cours.html', {'cours': cours, 'query': query})
+
+
+def chatbot_view(request):
+    return render(request, 'chatbot.html')

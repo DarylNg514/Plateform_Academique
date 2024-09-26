@@ -30,15 +30,15 @@
                 <div class="col-md-4 col-lg-3 d-flex ftco-animate">
                     <div class="card shadow-sm p-3 mb-4 bg-white rounded w-100">
                         <div class="card-header text-center bg-primary text-white">
-                            <h3 class="mb-0">{{ horaire.cours.sigle }}</h3>
-                            <p class="mb-0">{{ horaire.cours.titre }}</p>
+                            <h3 class="mb-0">{{ horaire.groupe.nom_groupe }}</h3>
+                            <p class="mb-0">{{ horaire.groupe.attributions.first.professeur.nom }}</p>
                         </div>
                         <div class="card-body">
                             <ul class="list-unstyled">
                                 <li class="mb-2"><i class="bi bi-calendar-week"></i> <strong>Jour :</strong> {{ horaire.jour }}</li>
                                 <li class="mb-2"><i class="bi bi-clock"></i> <strong>Heure :</strong> {{ horaire.heure_debut }} - {{ horaire.heure_fin }}</li>
                                 <li class="mb-2"><i class="bi bi-geo-alt"></i> <strong>Salle :</strong> {{ horaire.salle.nom }} ({{ horaire.salle.batiment }})</li>
-                                <li class="mb-2"><i class="bi bi-person"></i> <strong>Professeur :</strong> {{ horaire.professeur.prenom }} {{ horaire.professeur.nom }}</li>
+                                <li class="mb-2"><i class="bi bi-person"></i> <strong>Professeur :</strong> {{ horaire.groupe.attributions.first.professeur.prenom }} {{ horaire.groupe.attributions.first.professeur.nom }}</li>
                             </ul>
                         </div>
                         

@@ -25,48 +25,6 @@ class Cours(models.Model):
     def __str__(self):
         return f"{self.sigle} - {self.titre}"
 
-
-# Modèle représentant un horaire
-class Horaire(models.Model):
-    cours = models.ForeignKey(Cours, on_delete=models.CASCADE, related_name='horaires')
-    jour = models.CharField(max_length=15)  # Ex: Lundi, Mardi, etc.
-    heure_debut = models.TimeField()
-    heure_fin = models.TimeField()
-    salle = models.ForeignKey(Salle, on_delete=models.CASCADE, related_name='horaires')
-    professeur = models.ForeignKey(Utilisateur, limit_choices_to={'role': 'Enseignant'}, on_delete=models.CASCADE, related_name='horaires',null=True, blank=True)  # Ajout du champ professeur
-
-    class Meta:
-        unique_together = ('cours', 'salle', 'jour', 'heure_debut')
-
-    def __str__(self):
-        return f"{self.cours.sigle} - {self.jour}: {self.heure_debut} - {self.heure_fin} ({self.salle})"
-
-    def clean(self):
-        # Vérifier les conflits d'horaires avant de sauvegarder l'horaire
-        # 1. Conflit de salle: deux cours ne doivent pas être planifiés à la même heure dans la même salle
-        conflicts = Horaire.objects.filter(
-            salle=self.salle,
-            jour=self.jour,
-            heure_debut__lt=self.heure_fin,
-            heure_fin__gt=self.heure_debut
-        ).exclude(id=self.id)
-        if conflicts.exists():
-            raise ValidationError(f"Conflit d'horaire: La salle {self.salle.nom} est déjà réservée à ce créneau horaire.")
-
-        # 2. Conflit de professeur: un professeur ne doit pas avoir deux cours en même temps
-        prof_conflits = Horaire.objects.filter(
-            professeur=self.professeur,
-            jour=self.jour,
-            heure_debut__lt=self.heure_fin,
-            heure_fin__gt=self.heure_debut
-        ).exclude(id=self.id)
-        if prof_conflits.exists():
-            raise ValidationError(f"Conflit d'horaire: Le professeur {self.professeur.username} a déjà un cours prévu à ce créneau horaire.")
-
-    def save(self, *args, **kwargs):
-        # Appeler la méthode clean avant de sauvegarder pour valider les règles
-        self.clean()
-        super(Horaire, self).save(*args, **kwargs)
         
 class Groupe(models.Model):
     nogroupe = models.CharField(max_length=20, unique=True)  # Identifiant unique pour chaque groupe
@@ -92,7 +50,6 @@ class Attribution(models.Model):
             raise ValidationError(f"Le professeur {self.professeur.nom} est déjà assigné au cours {self.cours.sigle} dans le groupe {self.groupe.nogroupe}.")
 
         
-        
 class Inscription(models.Model):
     etudiant = models.ForeignKey(Utilisateur, limit_choices_to={'role': 'Etudiant'}, on_delete=models.CASCADE, related_name='inscriptions')
     cours = models.ForeignKey(Cours, on_delete=models.CASCADE, related_name='inscriptions')
@@ -115,6 +72,49 @@ class Inscription(models.Model):
         # Appeler la méthode clean avant de sauvegarder pour valider les règles
         self.clean()
         super(Inscription, self).save(*args, **kwargs)    
+        
+
+# Modèle représentant un horaire
+class Horaire(models.Model):
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE, related_name='horaires')  # Lien avec le groupe
+    jour = models.CharField(max_length=15)  # Ex: Lundi, Mardi, etc.
+    heure_debut = models.TimeField()
+    heure_fin = models.TimeField()
+    salle = models.ForeignKey(Salle, on_delete=models.CASCADE, related_name='horaires')
+
+    class Meta:
+        unique_together = ('groupe', 'salle', 'jour', 'heure_debut')
+
+    def __str__(self):
+        return f"{self.groupe.nom_groupe} - {self.jour}: {self.heure_debut} - {self.heure_fin} ({self.salle})"
+
+    def clean(self):
+        # Vérifier les conflits d'horaires avant de sauvegarder l'horaire
+        # 1. Conflit de salle: deux groupes ne doivent pas être planifiés à la même heure dans la même salle
+        conflicts = Horaire.objects.filter(
+            salle=self.salle,
+            jour=self.jour,
+            heure_debut__lt=self.heure_fin,
+            heure_fin__gt=self.heure_debut
+        ).exclude(id=self.id)
+        if conflicts.exists():
+            raise ValidationError(f"Conflit d'horaire: La salle {self.salle.nom} est déjà réservée à ce créneau horaire.")
+
+        # 2. Conflit de groupe: un groupe ne doit pas avoir deux cours en même temps
+        groupe_conflits = Horaire.objects.filter(
+            groupe=self.groupe,
+            jour=self.jour,
+            heure_debut__lt=self.heure_fin,
+            heure_fin__gt=self.heure_debut
+        ).exclude(id=self.id)
+        if groupe_conflits.exists():
+            raise ValidationError(f"Conflit d'horaire: Le groupe {self.groupe.nom_groupe} a déjà un cours prévu à ce créneau horaire.")
+
+    def save(self, *args, **kwargs):
+        # Appeler la méthode clean avant de sauvegarder pour valider les règles
+        self.clean()
+        super(Horaire, self).save(*args, **kwargs)
+
 
 # Modèle représentant un document pour un cours
 class CoursDocument(models.Model):
@@ -134,6 +134,10 @@ class Evaluation(models.Model):
     note_maximale = models.DecimalField(max_digits=5, decimal_places=2)
     ponderation = models.DecimalField(max_digits=5, decimal_places=2)  # Pourcentage de la note finale
     date_limite = models.DateTimeField(null=True, blank=True)  # Date limite pour la soumission de l'évaluation
+    fichier = models.FileField(upload_to='documents_evaluation/', blank=True, null=True)
+    consignes = models.TextField(default='')
+    date_publication = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    
 
     def __str__(self):
         return f"{self.titre} - {self.cours.sigle}"

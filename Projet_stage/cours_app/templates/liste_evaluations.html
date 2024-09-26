@@ -42,6 +42,10 @@
                             <th>Type</th>
                             <th>Note Maximale</th>
                             <th>Pondération</th>
+                            <th>Date Limite</th>
+                            <th>Date de Publication</th> <!-- Nouvelle colonne ajoutée -->
+                            <th>Consignes</th>
+                            <th>Fichier</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -52,6 +56,22 @@
                                 <td>{{ evaluation.type_resultat }}</td>
                                 <td>{{ evaluation.note_maximale }}</td>
                                 <td>{{ evaluation.ponderation }}%</td>
+                                <td>
+                                    {% if evaluation.date_limite %}
+                                        {{ evaluation.date_limite|date:"d/m/Y H:i" }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ evaluation.date_publication|date:"d/m/Y H:i" }}</td> <!-- Affichage de la date de publication -->
+                                <td>{{ evaluation.consignes|truncatewords:10 }}</td>
+                                <td>
+                                    {% if evaluation.fichier %}
+                                        <a href="{{ evaluation.fichier.url }}" class="btn btn-info btn-sm">Télécharger</a>
+                                    {% else %}
+                                        Aucun fichier
+                                    {% endif %}
+                                </td>
                                 <td>
                                     {% if user.role == 'Enseignant' or user.role == 'Admin' %}
                                         <a href="{% url 'update_evaluation' evaluation.id %}" class="btn btn-primary btn-sm">
@@ -100,20 +120,20 @@
                     </a>
                 {% endif %}
 
-        <!-- Bouton de retour en fonction du rôle de l'utilisateur -->
-        {% if user.role == 'Admin' %}
-        <a href="{% url 'list_cours' %}" class="btn btn-primary btn-lg mt-3">
-            <i class="bi bi-arrow-left"></i> Retour à la liste des cours
-        </a>
-        {% elif user.role == 'Enseignant' %}
-        <a href="{% url 'mes_cours_professeur' %}" class="btn btn-primary btn-lg mt-3">
-            <i class="bi bi-arrow-left"></i> Retour à mes cours
-        </a>
-        {% elif user.role == 'Etudiant' %}
-        <a href="{% url 'mes_cours_etudiant' %}" class="btn btn-primary btn-lg mt-3">
-            <i class="bi bi-arrow-left"></i> Retour à mes cours
-        </a>
-        {% endif %}
+                <!-- Bouton de retour en fonction du rôle de l'utilisateur -->
+                {% if user.role == 'Admin' %}
+                <a href="{% url 'list_cours' %}" class="btn btn-primary btn-lg mt-3">
+                    <i class="bi bi-arrow-left"></i> Retour à la liste des cours
+                </a>
+                {% elif user.role == 'Enseignant' %}
+                <a href="{% url 'mes_cours_professeur' %}" class="btn btn-primary btn-lg mt-3">
+                    <i class="bi bi-arrow-left"></i> Retour à mes cours
+                </a>
+                {% elif user.role == 'Etudiant' %}
+                <a href="{% url 'mes_cours_etudiant' %}" class="btn btn-primary btn-lg mt-3">
+                    <i class="bi bi-arrow-left"></i> Retour à mes cours
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>

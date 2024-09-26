@@ -15,7 +15,7 @@
 </section>
 <section class="ftco-section bg-light">
     <div class="container">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             <div class="form-group">

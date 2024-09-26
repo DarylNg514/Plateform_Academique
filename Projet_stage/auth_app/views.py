@@ -171,7 +171,6 @@ def paiement_succes_inscription(request):
     return redirect('acceuil')
 
 
-
 def load_domaines(request):
     programme_ids = request.GET.getlist('programme_ids[]')
     domaines = Domaine.objects.filter(programme__id__in=programme_ids)
@@ -264,7 +263,6 @@ def update_utilisateur(request, id):
     else:
         form = UtilisateurChangeForm(instance=utilisateur)
     return render(request, 'update.html', {'form': form})
-
 
 
 def update_programme(request, id):

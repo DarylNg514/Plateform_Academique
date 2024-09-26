@@ -7,10 +7,10 @@
     <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
             <div class="col-md-9 ftco-animate text-center">
-                <h1 class="mb-2 bread">Mes Cours</h1>
+                <h1 class="mb-2 bread text-white">Mes Cours</h1>
                 <p class="breadcrumbs">
-                    <span class="mr-2"><a href="{% url 'acceuil' %}">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
-                    <span>Mes Cours <i class="ion-ios-arrow-forward"></i></span>
+                    <span class="mr-2"><a href="{% url 'acceuil' %}" class="text-white">Accueil <i class="ion-ios-arrow-forward"></i></a></span>
+                    <span class="text-white">Mes Cours <i class="ion-ios-arrow-forward"></i></span>
                 </p>
             </div>
         </div>
@@ -25,52 +25,59 @@
                 <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
         </ul>
-    {% endif %}
-        {% if cours_liste %}
-            <div class="row">
-                {% for cours in cours_liste %}
-                <div class="col-md-4 course ftco-animate">
-                    <div class="img" style="background-image: url('{% static 'images/cours.jpeg' %}');"></div>
-                    <div class="text pt-4">
-                        <h3>{{ cours.sigle }}</h3>
-                        <p><strong>Titre :</strong> {{ cours.titre }}</p>
-                        <p><strong>Description :</strong> {{ cours.description }}</p>
-                        <p><strong>Programme(s) :</strong> 
-                            {% for programme in cours.programme.all %}
-                                {{ programme.code_programme }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </p>
-                        <p><strong>Domaine(s) :</strong> 
-                            {% for domaine in cours.domaine.all %}
-                                {{ domaine.code_programme }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </p>
-                        <p><strong>Session(s) :</strong> 
-                            {% for session in cours.session.all %}
-                                {{ session.code_session }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </p>
-                        <p><strong>Professeur(s) :</strong> 
-                            {% for prof in cours.attribution_set.all %}
-                             {{ prof.professeur.nom }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </p>
-                        <div class="d-flex flex-column">
-                            <a href="{% url 'liste_evaluations' cours.id %}" class="btn btn-info me-2">
-                                <i class="bi bi-list-task"></i> Liste des Évaluations
-                            </a>
-                            <a href="{% url 'liste_documents' cours.id %}" class="btn btn-primary me-2">
-                                <i class="bi bi-folder"></i> Liste des Documents
-                            </a>
-                            <a href="{% url 'voir_notes_etudiant' cours.id %}" class="btn btn-warning mb-2">
-                                <i class="bi bi-bar-chart-line"></i> Voir les Notes
-                            </a>
-                            <form method="post" action="{% url 'abandonner_cours' cours.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="bi bi-x-circle"></i> Abandonner ce cours
-                                </button>
-                            </form>
+        {% endif %}
+        
+        {% if cours_professeurs %}
+            <div class="row g-4">
+                {% for item in cours_professeurs %}
+                <div class="col-md-4 d-flex align-items-stretch">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header p-0">
+                            <div class="img card-img-top" style="background-image: url('{% static 'images/cours.jpeg' %}'); height: 200px; background-size: cover; background-position: center;"></div>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ item.cours.sigle }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ item.cours.titre }}</h6>
+                            <p class="card-text mb-3"><strong>Description :</strong> {{ item.cours.description|truncatewords:20 }}</p>
+                            <p class="mb-1"><strong>Programme(s) :</strong> 
+                                {% for programme in item.cours.programme.all %}
+                                    <span class="badge bg-info text-dark">{{ programme.code_programme }}</span>{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p class="mb-1"><strong>Domaine(s) :</strong> 
+                                {% for domaine in item.cours.domaine.all %}
+                                    <span class="badge bg-secondary">{{ domaine.code_programme }}</span>{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p class="mb-1"><strong>Session(s) :</strong> 
+                                {% for session in item.cours.session.all %}
+                                    <span class="badge bg-success">{{ session.code_session }}</span>{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p class="mb-3"><strong>Professeur du Groupe :</strong> 
+                                {% if item.professeur %}
+                                    {{ item.professeur.nom }} {{ item.professeur.prenom }}
+                                {% else %}
+                                    Aucun professeur assigné
+                                {% endif %}
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{% url 'liste_evaluations' item.cours.id %}" class="btn btn-info btn-sm mb-2">
+                                    <i class="bi bi-list-task"></i> Liste des Évaluations
+                                </a>
+                                <a href="{% url 'liste_documents' item.cours.id %}" class="btn btn-primary btn-sm mb-2">
+                                    <i class="bi bi-folder"></i> Liste des Documents
+                                </a>
+                                <a href="{% url 'voir_notes_etudiant' item.cours.id %}" class="btn btn-warning btn-sm mb-2">
+                                    <i class="bi bi-bar-chart-line"></i> Voir les Notes
+                                </a>
+                                <form method="post" action="{% url 'abandonner_cours' item.cours.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="bi bi-x-circle"></i> Abandonner ce cours
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -79,14 +86,15 @@
         {% else %}
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <p>Vous n'êtes inscrit à aucun cours pour le moment.</p>
+                    <p class="lead">Vous n'êtes inscrit à aucun cours pour le moment.</p>
                 </div>
             </div>
         {% endif %}
+        
         <div class="row mt-4">
             <div class="col text-center">
                 <a href="{% url 'list_cours' %}" class="btn btn-secondary btn-lg">
-                    <i class="bi bi-plus-lg"></i> S'inscrire a un cours
+                    <i class="bi bi-plus-lg"></i> S'inscrire à un cours
                 </a>
             </div>
         </div>

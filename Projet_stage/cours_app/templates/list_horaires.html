@@ -41,9 +41,16 @@
                                 <thead class="thead-dark">
                                     <tr>
                                         <th>Heure</th>
+                                        <th>Groupe</th>
                                         <th>Cours</th>
                                         <th>Salle</th>
-                                        <th>Professeurs</th>
+                                       <!--
+                                        {% if utilisateur.role == 'Enseignant' %}
+                                            <th>Nombre d'Étudiants</th>
+                                        {% elif utilisateur.role == 'Etudiant' %}
+                                            <th>Professeur</th>
+                                        {% endif %}
+                                       --> 
                                         {% if utilisateur.role == 'Admin' %}
                                             <th>Actions</th>
                                         {% endif %}
@@ -53,15 +60,27 @@
                                     {% for horaire in horaires_jour %}
                                         <tr>
                                             <td>{{ horaire.heure_debut }} - {{ horaire.heure_fin }}</td>
-                                            <td>{{ horaire.cours.sigle }}<br><small>{{ horaire.cours.titre }}</small></td>
-                                            <td>{{ horaire.salle.nom }}<br><small>Batiment {{ horaire.salle.batiment }}</small></td>
-                                            <td>
-                                                <ul class="list-unstyled">
-                                                    {% for prof in horaire.cours.professeur.all %}
-                                                        <li>{{ prof.prenom }} {{ prof.nom }}</li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </td>
+                                            <td>{{ horaire.groupe.nom_groupe }}</td>
+                                            <td>{{ horaire.cours.sigle }} - {{ horaire.cours.titre }}</td>
+                                            <td>{{ horaire.salle.nom }}<br><small>Bâtiment {{ horaire.salle.batiment }}</small></td>
+                                            <!--
+                                            
+                                                {% if utilisateur.role == 'Enseignant' %}
+                                                {% with nb_etudiants_par_groupe.horaire.groupe.id as nb_etudiants %}
+                                                    <td>{{ nb_etudiants }}</td>
+                                                {% endwith %}
+                                            {% elif utilisateur.role == 'Etudiant' %}
+                                                <td>
+                                                    {% if horaire.groupe.attributions.exists %}
+                                                        {% for attribution in horaire.groupe.attributions.all %}
+                                                            {{ attribution.professeur.nom }}{% if not forloop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </td>
+                                            {% endif %}
+
+                                            -->
+                                            
                                             {% if utilisateur.role == 'Admin' %}
                                                 <td>
                                                     <a href="{% url 'update_horaire' horaire.id %}" class="btn btn-primary btn-sm">

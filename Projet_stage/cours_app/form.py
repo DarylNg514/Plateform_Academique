@@ -70,11 +70,10 @@ class HoraireForm(forms.ModelForm):
     jour = forms.ChoiceField(choices=JOURS_SEMAINE, label="Jour de la semaine")
     heure_debut = forms.ChoiceField(choices=HEURES_CHOIX, label="Heure de début")
     heure_fin = forms.ChoiceField(choices=HEURES_CHOIX, label="Heure de fin")
-    professeur = forms.ModelChoiceField(queryset=Utilisateur.objects.filter(role='Enseignant'), label="Professeur")  # Ajout du champ professeur
     
     class Meta:
         model = Horaire
-        fields = ['cours', 'jour', 'heure_debut', 'heure_fin', 'salle', 'professeur']  # Ajout du champ professeur
+        fields = ['groupe', 'jour', 'heure_debut', 'heure_fin', 'salle']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -91,6 +90,7 @@ class HoraireForm(forms.ModelForm):
                 raise forms.ValidationError("L'heure de fin doit être supérieure à l'heure de début.")
         
         return cleaned_data
+
     
 class SalleForm(forms.ModelForm):
     class Meta:
@@ -117,11 +117,17 @@ class CoursDocumentForm(forms.ModelForm):
 class EvaluationForm(forms.ModelForm):
     class Meta:
         model = Evaluation
-        fields = ['titre', 'type_resultat', 'note_maximale', 'ponderation']
-
+        fields = ['titre', 'type_resultat', 'note_maximale', 'ponderation', 'date_limite', 'fichier', 'consignes']
+        widgets = {
+            'date_limite': forms.DateInput(attrs={
+                'type': 'date',  # Utilisation du type HTML5 "date"
+                'class': 'form-control',
+                'placeholder': 'Date limite de soumission'
+            }),
+        }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Ajout des placeholders
+        # Ajout des placeholders et classes CSS
         self.fields['titre'].widget.attrs.update({
             'placeholder': 'Titre de l\'évaluation (ex: Examen final, Devoir 1)',
             'class': 'form-control'
@@ -138,6 +144,16 @@ class EvaluationForm(forms.ModelForm):
             'placeholder': 'Pondération (ex: 20%)',
             'class': 'form-control'
         })
+       
+        self.fields['fichier'].widget.attrs.update({
+            'class': 'form-control-file'
+        })
+        self.fields['consignes'].widget.attrs.update({
+            'placeholder': 'Consignes pour l\'évaluation',
+            'class': 'form-control',
+            'rows': 5
+        })
+
 
 # Formulaire pour attribuer une note à un étudiant
 class NoteForm(forms.ModelForm):

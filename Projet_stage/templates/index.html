@@ -96,6 +96,7 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Basculer la navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      
       <div class="collapse navbar-collapse justify-content-center" id="ftco-nav">
         <ul class="navbar-nav">
           {% url 'afficher_messages' as afficher_messages_url %}
@@ -119,6 +120,7 @@
           {% url 'about' as about_url %}
           {% url 'connexion' as connexion_url %}
           {% url 'deconnexion' as deconnexion_url %}
+          {% url 'chatbot' as chatbot_url %}
   
           {% if user.is_authenticated %}
           <li class="nav-item me-3 {% if request.path == afficher_messages_url %}active{% endif %}">
@@ -178,6 +180,9 @@
           <li class="nav-item me-3 {% if request.path == about_url %}active{% endif %}">
             <a href="{{ about_url }}" class="nav-link"><i class="bi bi-info-circle"></i> À propos</a>
           </li>
+          <li class="nav-item me-3 {% if request.path == about_url %}active{% endif %}">
+            <a href="{{ chatbot_url }}" class="nav-link"><i class="bi bi-robot"></i></i> Assistance virtuelle NG-D</a>
+          </li>
          
         </ul>
       </div>
@@ -186,7 +191,15 @@
         {% endif %}
        
       </div>
+      
       {% if user.is_authenticated %}
+      
+      <form class="searchform order-lg" method="GET" action="{% url 'search_cours' %}">
+        <div class="form-group d-flex">
+          <input type="text" class="form-control pl-3" type="search" placeholder="Rechercher un cours..." name="q" aria-label="Search">
+          <button type="submit" placeholder="" class="form-control search"><span class="ion-ios-search"></span></button>
+        </div>
+      </form>
       <a href="{{ deconnexion_url }}" class="btn btn-outline-light {% if request.path == connexion_url %}active{% endif %}"><i class="bi bi-box-arrow-in-right"></i> Déconnexion</a>
       {% endif %}
       
