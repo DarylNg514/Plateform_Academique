@@ -289,14 +289,14 @@ class CandidatForm(UserCreationForm):
     sex = forms.ChoiceField(choices=Utilisateur.SEX_CHOICES, required=True)
     programme = forms.ModelMultipleChoiceField(
         queryset=Programme.objects.all(),
-        required=False,
+        required=True,
         widget=forms.CheckboxSelectMultiple,  # Utilisation de cases à cocher pour permettre la sélection multiple
         label="Programmes"
     )
-    session = forms.ModelChoiceField(queryset=Session.objects.all(), required=False)
-    domaine = forms.ModelChoiceField(queryset=Domaine.objects.none(), required=False)
-    diplome = forms.FileField(required=False, label="Diplôme (merci de fournir votre diplôme le plus élevé)")
-    passport = forms.FileField(required=False, label="Passport")
+    session = forms.ModelChoiceField(queryset=Session.objects.all(), required=True)
+    domaine = forms.ModelChoiceField(queryset=Domaine.objects.none(), required=True)
+    diplome = forms.FileField(required=True, label="Diplôme (merci de fournir votre diplôme le plus élevé)")
+    passport = forms.FileField(required=True, label="Passport")
 
     class Meta:
         model = Utilisateur
