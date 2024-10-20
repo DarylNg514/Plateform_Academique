@@ -1,18 +1,17 @@
-version: '3'
-
 services:
   web:
     build: .
     ports:
       - "8001:8001"
-    depends_on:
-      - db
+    volumes:
+      - .:/app
     environment:
-      - DATABASE_HOST=host.docker.internal # Utilise l'IP de l'hôte
-      - DATABASE_PORT=3306
-      - DATABASE_NAME=Projet_stage
-      - DATABASE_USER=root
-      - DATABASE_PASSWORD=
+      PYTHONUNBUFFERED: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command: >
       sh -c "python manage.py migrate &&
              gunicorn Projet_stage.wsgi:application --bind 0.0.0.0:8001"
@@ -22,13 +21,16 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: "Projet_stage"
-      MYSQL_USER: "root"
-      MYSQL_PASSWORD: ""
       MYSQL_ROOT_PASSWORD: ""
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   db_data:

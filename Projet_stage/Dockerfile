@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copier le reste des fichiers du projet vers le conteneur
 COPY . /app/
 
-# Collecter les fichiers statiques (nécessaire pour WhiteNoise ou le déploiement)
+# Collect static files for WhiteNoise
 RUN python manage.py collectstatic --noinput
 
 # Exposer le port sur lequel Django fonctionnera
