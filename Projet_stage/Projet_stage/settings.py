@@ -101,8 +101,8 @@ DATABASES = {
     'PASSWORD':'',
     #'HOST': 'host.docker.internal',  # Adresse permettant d'accéder à l'hôte depuis le conteneur Docker
 
-    'HOST': '127.0.0.1', 
-    #'HOST': 'db',  # Use the service name `db` defined in docker-compose
+    #'HOST': '127.0.0.1', 
+    'HOST': 'db',  # Use the service name `db` defined in docker-compose
     'PORT': '3306',
     }
     ,
