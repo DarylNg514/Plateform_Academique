@@ -99,7 +99,7 @@ DATABASES = {
     'NAME': os.getenv('DATABASE_NAME', 'Projet_stage'),
     'USER': os.getenv('DATABASE_USER', 'root'),
     'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
-    'HOST': os.getenv('DATABASE_HOST', 'db'),  # Référence au service db de Docker Compose
+    'HOST': os.getenv('DATABASE_HOST', 'host.docker.internal'),  # Connexion à l'hôte Docker
     'PORT': os.getenv('DATABASE_PORT', '3306'),
     #'NAME': 'Projet_stage',
     #'USER': 'root', 
