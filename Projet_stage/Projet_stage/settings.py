@@ -96,14 +96,19 @@ AUTH_USER_MODEL = 'auth_app.Utilisateur'
 DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.mysql',
-    'NAME': 'Projet_stage',
-    'USER': 'root', 
-    'PASSWORD':'',
+    'NAME': os.getenv('DATABASE_NAME', 'Projet_stage'),
+    'USER': os.getenv('DATABASE_USER', 'root'),
+    'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
+    'HOST': os.getenv('DATABASE_HOST', 'db'),  # Référence au service db de Docker Compose
+    'PORT': os.getenv('DATABASE_PORT', '3306'),
+    #'NAME': 'Projet_stage',
+    #'USER': 'root', 
+    #'PASSWORD':'',
     #'HOST': 'host.docker.internal',  # Adresse permettant d'accéder à l'hôte depuis le conteneur Docker
 
-    'HOST': '127.0.0.1', 
+    #'HOST': '127.0.0.1', 
     #'HOST': 'db',  # Use the service name `db` defined in docker-compose
-    'PORT': '3306',
+    #'PORT': '3306',
     }
     ,
     'sqlite': {
