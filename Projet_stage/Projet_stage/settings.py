@@ -31,7 +31,7 @@ ALLOWED_HOSTS = [
     '.ngrok-free.app',
     'alpaca-robust-shrew.ngrok-free.app',  # Add your Ngrok URL here
 ]
-
+ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = [
     'https://alpaca-robust-shrew.ngrok-free.app',  # Add your Ngrok URL here
 ]
@@ -57,6 +57,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -163,3 +164,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
