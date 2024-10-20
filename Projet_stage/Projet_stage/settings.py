@@ -93,54 +93,32 @@ AUTH_USER_MODEL = 'auth_app.Utilisateur'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Configuration par défaut (environnement de développement)
 DATABASES = {
     'default': {
-    'ENGINE': 'django.db.backends.mysql',
-    'NAME': os.getenv('DATABASE_NAME', 'Projet_stage'),
-    'USER': os.getenv('DATABASE_USER', 'root'),
-    'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
-    'HOST': os.getenv('DATABASE_HOST', '127.0.0.1'),  # Connexion à l'hôte Docker
-    'PORT': os.getenv('DATABASE_PORT', '3306'),
-    #'NAME': 'Projet_stage',
-    #'USER': 'root', 
-    #'PASSWORD':'',
-    #'HOST': 'host.docker.internal',  # Adresse permettant d'accéder à l'hôte depuis le conteneur Docker
-
-    #'HOST': '127.0.0.1', 
-    #'HOST': 'db',  # Use the service name `db` defined in docker-compose
-    #'PORT': '3306',
-    }
-    ,
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Projet_stage',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    },
     'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-# Configuration de la base de données pour l'environnement de production
-if os.getenv('ENV') == 'production':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('DATABASE_NAME'),
-            'USER': os.getenv('DATABASE_USER'),
-            'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-            'HOST': os.getenv('DATABASE_HOST'),
-            'PORT': os.getenv('DATABASE_PORT', '3306'),
-        }
-    }
-else:
-    # Configuration pour l'environnement local (développement)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'Projet_stage',
-            'USER': 'root',
-            'PASSWORD': '',
-            'HOST': '127.0.0.1',
-            'PORT': '3306',
-        }
-    }
 
+# Configuration pour l'environnement de production
+if os.getenv('ENV') == 'production':
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT', '3306'),
+    }
 LOGIN_URL = 'connexion' 
 
 
