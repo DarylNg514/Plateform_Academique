@@ -23,8 +23,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copier le reste des fichiers du projet vers le conteneur
 COPY . /app/
 
+# Collect static files for WhiteNoise
+RUN python manage.py collectstatic --noinput
+
 # Exposer le port sur lequel Django fonctionnera
 EXPOSE 8001
 
-# Lancer le serveur Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8001"]
+# Lancer le serveur Django avec les migrations
+CMD ["sh", "-c", "python manage.py migrate && gunicorn Projet_stage.wsgi:application --bind 0.0.0.0:8001"]
